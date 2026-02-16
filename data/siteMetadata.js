@@ -1,6 +1,6 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'BitWise | Tales from the Backend',
+  title: 'BitWise | of backends and other tales...',
   author: 'Rob@BitWise',
   headerTitle: '',
   description:
