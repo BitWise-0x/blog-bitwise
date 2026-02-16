@@ -28,28 +28,28 @@ The solution consists of three Docker services deployed as a Swarm stack, commun
 graph TB
     subgraph swarm["Docker Swarm Cluster"]
         subgraph overlay["Encrypted Overlay Network"]
-            db1["database<br/><i>MongoDB 8.0</i><br/>Node 1 (Primary)"]
-            db2["database<br/><i>MongoDB 8.0</i><br/>Node 2 (Secondary)"]
-            db3["database<br/><i>MongoDB 8.0</i><br/>Node 3 (Secondary)"]
+            db1["database\nMongoDB 8.0\nNode 1 - Primary"]
+            db2["database\nMongoDB 8.0\nNode 2 - Secondary"]
+            db3["database\nMongoDB 8.0\nNode 3 - Secondary"]
         end
 
-        ctrl["dbcontroller<br/><i>Python Sidecar</i><br/>Manager Node Only"]
-        ui["nosqlclient<br/><i>Web UI</i><br/>Optional"]
+        ctrl["dbcontroller\nPython Sidecar\nManager Node Only"]
+        ui["nosqlclient\nWeb UI\nOptional"]
     end
 
     sock["/var/run/docker.sock"]
 
-    ctrl -- "Docker API:<br/>discover tasks,<br/>inspect IPs,<br/>exec commands" --> sock
+    ctrl -- "Docker API:\ndiscover tasks,\ninspect IPs,\nexec commands" --> sock
     sock --> db1
     sock --> db2
     sock --> db3
 
-    ctrl -. "rs.initiate()<br/>rs.reconfig()<br/>rs.status()" .-> overlay
+    ctrl -. "rs.initiate()\nrs.reconfig()\nrs.status()" .-> overlay
 
     db1 <-- "Replication" --> db2
     db1 <-- "Replication" --> db3
 
-    ui -- "mongodb:// connection" --> overlay
+    ui -- "mongodb://\nconnection" --> overlay
 
     style db1 fill:#2d6a4f,stroke:#40916c,color:#fff
     style db2 fill:#1b4332,stroke:#40916c,color:#fff
