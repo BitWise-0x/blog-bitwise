@@ -24,7 +24,7 @@ export default function Footer() {
           <div>{` • `}</div>
           <div>{`© ${new Date().getFullYear()}`}</div>
           <div>{` • `}</div>
-          <Link href="/">Backend Blog</Link>
+          <Link href="/">after midnight</Link>
         </div>
       </div>
     </footer>

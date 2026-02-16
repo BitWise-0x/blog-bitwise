@@ -1,4 +1,4 @@
-# BitWise | Backend Blog
+# BitWise | after midnight
 
 Public blog at [blog.bitwisesolutions.co](https://blog.bitwisesolutions.co) covering backend engineering, AI/ML, blockchain, and developer tooling.
 
