@@ -8,7 +8,7 @@
   </defs>
 
   <!-- BitWise text with gradient - left aligned -->
-  <text x="0" y="54" font-family="monospace, 'Courier New', Courier" font-size="42" font-weight="700" fill="url(#bitwise-gradient)">
+  <text x="0" y="54" font-family="'Space Grotesk', sans-serif" font-size="42" font-weight="700" fill="url(#bitwise-gradient)">
     BitWise
   </text>
 
