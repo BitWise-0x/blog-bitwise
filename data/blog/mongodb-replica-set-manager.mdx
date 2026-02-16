@@ -1,0 +1,345 @@
+---
+title: 'Building Production MongoDB Replica Sets in Docker Swarm'
+date: '2025-09-12'
+lastmod: '2025-09-12'
+tags: ['docker', 'mongodb', 'orchestration', 'devops', 'high-availability']
+draft: false
+summary: 'How I built a production-ready MongoDB replica set controller for Docker Swarm that handles automated deployment, scaling, and failover with zero downtime.'
+authors: ['default']
+---
+
+## The Problem
+
+Running MongoDB in production with high availability is critical, but doing it in Docker Swarm introduces unique challenges. Traditional MongoDB replica set configuration assumes:
+
+- Static IP addresses or hostnames
+- Manual replica set initialization
+- Predictable node discovery
+
+Docker Swarm breaks all these assumptions with:
+
+- Dynamic IP assignment
+- Service discovery via DNS
+- Container recreation and rescheduling
+
+## Enter MongoDB Replica Set Manager
+
+After too many late nights debugging MongoDB failovers in Swarm, I built the [MongoDB Replica Set Manager](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager)—a specialized controller that automates everything needed for production-ready MongoDB clusters in containerized environments.
+
+## Architecture Overview
+
+The solution consists of three main components:
+
+### 1. **Sidecar Controller**
+
+Each MongoDB container runs with a sidecar controller that:
+
+- Monitors cluster health
+- Handles replica set configuration
+- Manages member discovery
+- Coordinates failover operations
+
+```yaml
+# docker-compose.yml snippet
+services:
+  mongo:
+    image: mongo:7
+    command: mongod --replSet rs0 --bind_ip_all
+    deploy:
+      replicas: 3
+
+  mongo-controller:
+    image: bitwise/mongo-rs-controller:latest
+    environment:
+      - MONGO_REPLICA_SET_NAME=rs0
+      - MONGO_SERVICE_NAME=mongo
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+```
+
+### 2. **Service Discovery**
+
+The controller uses Docker Swarm's native DNS for dynamic discovery:
+
+```javascript
+async function discoverMembers() {
+  const serviceName = process.env.MONGO_SERVICE_NAME
+  const tasks = await docker.listTasks({
+    filters: {
+      service: [serviceName],
+      'desired-state': ['running']
+    }
+  })
+
+  return tasks
+    .filter(task => task.Status.State === 'running')
+    .map(task => {
+      const ip = task.NetworksAttachments[0].Addresses[0].split('/')[0]
+      return `${ip}:27017`
+    })
+}
+```
+
+### 3. **Replica Set Configuration Manager**
+
+Automatically initializes and maintains the replica set:
+
+```javascript
+async function ensureReplicaSet() {
+  const members = await discoverMembers()
+  const config = await getReplicaSetConfig()
+
+  if (!config) {
+    // Initialize new replica set
+    await initializeReplicaSet(members)
+  } else {
+    // Update existing configuration
+    await updateReplicaSetMembers(config, members)
+  }
+}
+```
+
+## Key Features
+
+### Automatic Initialization
+
+On first deployment, the controller:
+
+1. Waits for all MongoDB instances to be healthy
+2. Discovers all cluster members via Swarm DNS
+3. Initializes the replica set with optimal configuration
+4. Sets up authentication and access controls
+
+```javascript
+async function initializeReplicaSet(members) {
+  const config = {
+    _id: process.env.MONGO_REPLICA_SET_NAME,
+    members: members.map((host, idx) => ({
+      _id: idx,
+      host: host,
+      priority: idx === 0 ? 2 : 1  // Prefer first member as primary
+    }))
+  }
+
+  await mongo.admin().command({
+    replSetInitiate: config
+  })
+
+  console.log('✓ Replica set initialized successfully')
+}
+```
+
+### Dynamic Scaling
+
+Want to scale your MongoDB cluster? Just update the replica count:
+
+```bash
+# Scale from 3 to 5 members
+docker service scale mongo_mongo=5
+```
+
+The controller automatically:
+
+- Detects new members joining
+- Adds them to the replica set configuration
+- Waits for initial sync to complete
+- Updates priorities and votes appropriately
+
+### Automatic Failover
+
+When a node fails:
+
+1. **Detection**: Health checks identify the failed member (< 5 seconds)
+2. **Election**: Remaining members elect a new primary (< 10 seconds)
+3. **Recovery**: When the failed node returns, it's automatically re-added
+4. **Zero Downtime**: Clients reconnect automatically via connection string
+
+```javascript
+async function monitorHealth() {
+  setInterval(async () => {
+    const status = await mongo.admin().command({ replSetGetStatus: 1 })
+
+    status.members.forEach(member => {
+      if (member.health === 0 && member.stateStr !== 'REMOVED') {
+        console.warn(`⚠ Member ${member.name} is unhealthy`)
+        // Controller will automatically handle removal/re-add
+      }
+    })
+  }, 5000)
+}
+```
+
+## Production Deployment
+
+### Network Configuration
+
+Use an overlay network for the MongoDB cluster:
+
+```yaml
+networks:
+  mongo-cluster:
+    driver: overlay
+    attachable: true
+    driver_opts:
+      encrypted: "true"
+```
+
+### Storage Strategy
+
+For production, use volume mounts with proper backup strategies:
+
+```yaml
+volumes:
+  mongo-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/mongodb/data
+```
+
+### Resource Limits
+
+Set appropriate resource constraints:
+
+```yaml
+deploy:
+  resources:
+    limits:
+      cpus: '2'
+      memory: 4G
+    reservations:
+      cpus: '1'
+      memory: 2G
+```
+
+## Monitoring & Observability
+
+The controller exposes metrics for Prometheus:
+
+```javascript
+// Metrics endpoint
+app.get('/metrics', async (req, res) => {
+  const status = await getReplicaSetStatus()
+
+  res.send(`
+# HELP mongodb_rs_members_total Total replica set members
+mongodb_rs_members_total ${status.members.length}
+
+# HELP mongodb_rs_healthy_members Healthy replica set members
+mongodb_rs_healthy_members ${status.members.filter(m => m.health === 1).length}
+
+# HELP mongodb_rs_primary Current primary node
+mongodb_rs_primary ${status.members.find(m => m.stateStr === 'PRIMARY') ? 1 : 0}
+  `)
+})
+```
+
+Integrate with Grafana for visualization:
+
+- Replica set member status
+- Replication lag
+- Connection pool utilization
+- Operation latencies
+
+## Real-World Performance
+
+In production across multiple environments:
+
+- **Failover time**: < 15 seconds from detection to new primary elected
+- **Zero data loss**: With proper write concerns (`w: "majority"`)
+- **Auto-recovery**: Failed members rejoin automatically when healthy
+- **Scaling**: Add/remove members with no manual intervention
+
+## Lessons Learned
+
+### 1. **DNS Resolution Timing**
+
+Docker Swarm DNS can take a few seconds to update. Always implement retry logic:
+
+```javascript
+async function waitForDNS(serviceName, expectedCount, timeout = 60000) {
+  const startTime = Date.now()
+
+  while (Date.now() - startTime < timeout) {
+    const members = await discoverMembers(serviceName)
+    if (members.length >= expectedCount) {
+      return members
+    }
+    await sleep(2000)
+  }
+
+  throw new Error('DNS resolution timeout')
+}
+```
+
+### 2. **Write Concern is Critical**
+
+Always use `w: "majority"` for production writes:
+
+```javascript
+await collection.insertOne(
+  { data: 'important' },
+  { writeConcern: { w: 'majority', wtimeout: 5000 } }
+)
+```
+
+### 3. **Connection String Format**
+
+Use the replica set connection string format:
+
+```
+mongodb://mongo1,mongo2,mongo3/?replicaSet=rs0&readPreference=primaryPreferred
+```
+
+This allows the driver to:
+- Automatically discover all members
+- Route writes to the primary
+- Distribute reads across secondaries
+- Reconnect on failover
+
+## Getting Started
+
+Deploy your own production-ready MongoDB cluster:
+
+```bash
+# Clone the repository
+git clone https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager
+
+# Review and customize the stack file
+vim docker-stack.yml
+
+# Deploy to your Swarm cluster
+docker stack deploy -c docker-stack.yml mongodb
+
+# Monitor initialization
+docker service logs -f mongodb_controller
+
+# Verify replica set status
+docker exec $(docker ps -q -f name=mongodb_mongo) \
+  mongo --eval "rs.status()"
+```
+
+## Future Enhancements
+
+I'm working on several improvements:
+
+- **Automated backups**: Scheduled snapshots with retention policies
+- **Point-in-time recovery**: Oplog replay for disaster recovery
+- **Multi-region support**: Geographically distributed replica sets
+- **TLS/SSL automation**: Automatic certificate management
+- **Performance tuning**: Auto-tuning based on workload patterns
+
+## Conclusion
+
+Running MongoDB in Docker Swarm doesn't have to be painful. With the right automation, you can achieve production-grade reliability with minimal operational overhead.
+
+The MongoDB Replica Set Manager has been running in production for over a year, managing multiple clusters handling millions of operations daily. It's open source and ready for your production workloads.
+
+Check out the [repository on GitHub](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager) for complete documentation, examples, and contribution guidelines.
+
+---
+
+*Questions about MongoDB clustering or Docker Swarm deployment strategies? Feel free to reach out or open an issue on GitHub.*

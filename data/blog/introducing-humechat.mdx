@@ -1,0 +1,197 @@
+---
+title: 'Introducing HumeChat: Voice AI with Emotional Intelligence'
+date: '2026-01-15'
+lastmod: '2026-02-15'
+tags: ['ai', 'projects', 'humechat', 'voice-ai', 'hume']
+draft: false
+summary: 'How I built a voice AI platform with real-time emotion detection across 48 categories, custom personas, voice cloning, and a Jungian self-discovery experience.'
+authors: ['default']
+---
+
+## Why I Built HumeChat
+
+Most AI conversations, even voice-based ones, treat speech as words to transcribe. The tone, hesitation, excitement, frustration: all of it gets thrown away. I wanted to build something that treats emotion as a first-class input.
+
+The goal was real-time detection of how someone feels during a live conversation, with an AI that adapts to it. [Hume AI's](https://hume.ai) Enhanced Voice Interface (EVI) technology was the right foundation. Their prosody analysis detects 48 distinct emotions from voice alone (tone, pitch, rhythm, pauses) and runs continuously during conversation.
+
+[HumeChat](https://humechat.com) is what I built on top of that. A voice AI platform where every conversation is emotionally aware. It has three products, each exploring a different use case:
+
+- **Playground** for open-ended voice AI companions
+- **Archetype** for Jungian depth psychology
+- **Wooza** for kids
+
+<Image
+  src="/static/images/blog/humechat/humechat-landing1.png"
+  alt="HumeChat landing page showing Playground, Archetype, and Wooza products"
+  width={800}
+  height={450}
+/>
+
+<Image
+  src="/static/images/blog/humechat/about.png"
+  alt="HumeChat About page, AI Voice Interface with Emotional Intelligence"
+  width={800}
+  height={450}
+/>
+
+## Real-Time Emotion Detection
+
+Emotion detection is what makes everything else in HumeChat work. During any voice session, Hume's prosody analysis runs continuously, tracking emotional shifts as they happen across 48 categories.
+
+The categories are granular: Calmness, Realization, Determination, Contemplation, Empathic Pain, Awkwardness, and dozens more. Each gets a precise percentage, grouped into Positive, Social, Cognitive, Calm, Negative, and Distress.
+
+<Image
+  src="/static/images/blog/humechat/emotion-tracking2.png"
+  alt="Playground dashboard showing conversation transcript with inline emotion detection"
+  width={800}
+  height={450}
+/>
+
+Every message in the conversation transcript gets an emotion breakdown. The dashboard shows what the system detected at each point: view the top emotions inline or expand to see all 48. This data feeds into session analysis, persona adaptation, and the clinical work in Archetype.
+
+<Image
+  src="/static/images/blog/humechat/emotion-tracking1.png"
+  alt="All 48 detected emotions organized by category"
+  width={800}
+  height={450}
+/>
+
+## Playground
+
+Playground is the core open-ended experience. Build any voice AI companion you want.
+
+<Image
+  src="/static/images/blog/humechat/playground1.png"
+  alt="Playground landing, AI Persona Builder with Custom Personas and Voice Cloning"
+  width={800}
+  height={450}
+/>
+
+Each persona gets its own:
+
+- **Voice** from 159+ presets across multiple languages and accents, or cloned from uploaded samples
+- **Language model** depending on purpose: Claude, GPT-4, Llama, Gemini, Groq, 25+ models total
+- **Personality and conversation style** with custom system prompts
+- **Memory** that persists across sessions, learning communication style and preferences over time
+
+<Image
+  src="/static/images/blog/humechat/playground2.png"
+  alt="Playground interface with persona selection, voice cloning, and Start Call"
+  width={800}
+  height={450}
+/>
+
+Conversations run over WebSocket with sub-second latency. Audio visualizers react to both the user's voice and the AI's responses. Four modes: Morph (47 3D morphing shapes), Particles (fluid particle orbs), Canvas (radial equalizer), and Messages (transcript view). All support brand palette customization with metallic themes.
+
+## Archetype
+
+Archetype is the product I'm most personally invested in. I wanted to pair depth psychology with emotionally-aware voice AI and see what a Carl Jung persona could do when it has real-time access to someone's emotional state during conversation.
+
+<Image
+  src="/static/images/blog/humechat/archetype1.png"
+  alt="Archetype landing, Jungian Self-Discovery with Assessment and Talk to Carl Jung"
+  width={800}
+  height={450}
+/>
+
+It's a structured Jungian self-discovery experience: archetype profiling, shadow integration, anima/animus work, and a four-stage individuation journey.
+
+<Image
+  src="/static/images/blog/humechat/archetype.png"
+  alt="Archetype information page showing four-stage individuation journey and expectations"
+  width={800}
+  height={450}
+/>
+
+### How It Works
+
+Six steps:
+
+1. Take the 12-question assessment
+2. View your personalized dashboard
+3. Progress through the individuation journey
+4. Have voice sessions with Carl Jung
+5. Receive AI clinical analysis after each session
+6. Track growth over time
+
+<Image
+  src="/static/images/blog/humechat/archetype-workflow.png"
+  alt="Archetype workflow from Assessment through Clinical Analysis to Track Growth"
+  width={800}
+  height={450}
+/>
+
+### Your Archetype Profile
+
+The entry point is a 12-question PMAI assessment based on Carol Pearson's Pearson-Marr Archetype Indicator. It identifies dominant, secondary, tertiary, and shadow archetypes across 12 types:
+
+- **Ego archetypes:** Innocent, Orphan, Hero, Caregiver
+- **Soul archetypes:** Explorer, Destroyer, Lover, Creator
+- **Self archetypes:** Ruler, Magician, Sage, Jester
+
+You get a full archetypal blend with percentages and a shadow identification.
+
+<Image
+  src="/static/images/blog/humechat/archetype-journey.png"
+  alt="Archetype profile showing archetypal blend with Sage 30%, Lover 21%, Creator 19% and Shadow Archetype identification"
+  width={800}
+  height={450}
+/>
+
+### Voice Sessions & Clinical Analysis
+
+Voice sessions with Carl Jung are personalized to your archetype profile and current individuation stage. Real-time emotion detection runs throughout, so Carl adapts to your emotional state as you speak.
+
+After each session, Claude Opus 4 performs a clinical analysis using Jungian methodology. Each assessment is tagged with therapeutic indicators ("Therapeutically Substantive," "Shadow Present," "Integration Movement") and measures affective engagement from intellectual to deep. Sessions are classified as "Emerging" or "Defended" based on the depth of engagement.
+
+<Image
+  src="/static/images/blog/humechat/archetype-analysis.png"
+  alt="Archetype clinical analysis dashboard showing session assessments with therapeutic tags"
+  width={800}
+  height={450}
+/>
+
+Progress through the four individuation stages (Persona, Shadow, Anima/Animus, Self) is quantified through a stage readiness score calculated from the last 5 sessions. Advancing requires reaching 80% readiness based on genuine therapeutic work. The full transparency model exposes everything: Carl's private clinical notes, affective engagement levels, resistance patterns, and session-by-session insights.
+
+## Wooza
+
+Wooza is a children's voice companion, currently in development. I wanted to explore whether emotionally-aware voice AI could work for kids in an educational context.
+
+<Image
+  src="/static/images/blog/humechat/wooza1.png"
+  alt="Wooza, Meet Buster the friendly AI troll for kids with homework help, storytelling, and reading practice"
+  width={800}
+  height={450}
+/>
+
+It features Buster, a friendly AI character designed specifically for kids:
+
+- **Homework help** with math, science, and general explanations
+- **Interactive storytelling** adventures
+- **Reading practice** with feedback
+- **Patient listener** for any question
+
+Built with safety first: no persona customization, child-friendly responses only, and a playful interface designed to keep focus on learning and fun.
+
+## Features at a Glance
+
+<Image
+  src="/static/images/blog/humechat/features.png"
+  alt="HumeChat feature overview"
+  width={800}
+  height={450}
+/>
+
+- **48-Emotion Detection** — real-time prosody analysis during voice sessions
+- **Multi-Persona System** — unlimited custom AI companions with distinct personalities
+- **Voice Cloning** — clone any voice from uploaded samples, or choose from 159+ presets
+- **25+ Language Models** — Claude, GPT-4, Llama, Gemini, Groq, and more per persona
+- **Persona Memory** — context preserved across sessions, learns preferences over time
+- **Real-time Voice Chat** — WebSocket-powered, sub-second latency
+- **Audio Visualizers** — four reactive visualization modes with customizable themes
+- **Jungian Archetype Profiling** — structured self-discovery with AI clinical analysis
+- **Personal Dashboard** — conversation history, full transcripts, emotion tracking, audio downloads
+
+## Try It
+
+HumeChat has a free demo with no account required. 10 minutes of voice AI conversation daily with access to public personas and emotion detection. Full access (custom personas, voice cloning, memory, dashboard) is currently invite-only and can be requested from the [sign-in page](https://humechat.com/auth/signin).
