@@ -12,6 +12,18 @@ export default async function Page() {
     name: siteMetadata.title,
     url: siteMetadata.siteUrl,
     description: siteMetadata.description,
+    publisher: {
+      '@type': 'Person',
+      name: siteMetadata.author,
+    },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteMetadata.siteUrl}/blog?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   }
 
   return (

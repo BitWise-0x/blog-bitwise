@@ -1,11 +1,16 @@
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer'
 import { allBlogs } from 'contentlayer/generated'
 import { genPageMetadata } from 'app/seo'
+import type { Metadata } from 'next'
 import ListLayout from '@/layouts/ListLayoutWithTags'
 
 const POSTS_PER_PAGE = 5
 
-export const metadata = genPageMetadata({ title: 'Blog' })
+export const metadata: Metadata = genPageMetadata({
+  title: 'Blog',
+  description:
+    'All posts on BitWise — deep dives into backend engineering, distributed systems, AI/ML, and infrastructure.',
+})
 
 export default async function BlogPage(props: { searchParams: Promise<{ page: string }> }) {
   const posts = allCoreContent(sortPosts(allBlogs))

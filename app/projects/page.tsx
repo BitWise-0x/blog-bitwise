@@ -1,8 +1,12 @@
 import projectsData from '@/data/projectsData'
 import Card from '@/components/Card'
 import { genPageMetadata } from 'app/seo'
+import type { Metadata } from 'next'
 
-export const metadata = genPageMetadata({ title: 'Projects' })
+export const metadata: Metadata = genPageMetadata({
+  title: 'Projects',
+  description: 'Open-source projects and tools built by BitWise.',
+})
 
 export default function Projects() {
   return (

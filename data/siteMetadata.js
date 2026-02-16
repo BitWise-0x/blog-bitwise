@@ -3,7 +3,8 @@ const siteMetadata = {
   title: 'BitWise | Tales from the Backend',
   author: 'Rob@BitWise',
   headerTitle: '',
-  description: 'BitWise | Tales from the Backend',
+  description:
+    'Deep dives into backend engineering, distributed systems, and infrastructure — practical insights from real-world projects.',
   language: 'en-US',
   theme: 'dark', // system, dark or light
   siteUrl: 'https://blog.bitwisesolutions.co',

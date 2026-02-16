@@ -4,8 +4,13 @@ import AuthorLayout from '@/layouts/AuthorLayout'
 import { coreContent } from 'pliny/utils/contentlayer'
 import { genPageMetadata } from 'app/seo'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
-export const metadata = genPageMetadata({ title: 'About' })
+export const metadata: Metadata = genPageMetadata({
+  title: 'About',
+  description:
+    'About BitWise — the engineer behind the blog and the backend systems explored here.',
+})
 
 export default function Page() {
   const author = allAuthors.find((p) => p.slug === 'default')
