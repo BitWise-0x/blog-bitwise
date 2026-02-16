@@ -9,32 +9,174 @@
   <!-- Background -->
   <rect width="1200" height="630" fill="#1a1b26"/>
 
-  <!-- Decorative binary pattern in background -->
-  <text x="50" y="90" font-family="monospace, 'Courier New', Courier" font-size="48" font-weight="300" fill="#7aa2f7" opacity="0.06">
-    01001000 01101001 01010100
-  </text>
-  <text x="200" y="160" font-family="monospace, 'Courier New', Courier" font-size="48" font-weight="300" fill="#bb9af7" opacity="0.06">
-    01000010 01010111 01110011
-  </text>
-  <text x="80" y="480" font-family="monospace, 'Courier New', Courier" font-size="48" font-weight="300" fill="#bb9af7" opacity="0.06">
-    01100010 01101001 01110100
-  </text>
-  <text x="300" y="550" font-family="monospace, 'Courier New', Courier" font-size="48" font-weight="300" fill="#7aa2f7" opacity="0.06">
-    01010111 01101001 01110011
+  <!-- Terminal window -->
+  <rect x="80" y="60" width="1040" height="510" rx="12" fill="#16161e" stroke="#292e42" stroke-width="1"/>
+
+  <!-- Title bar -->
+  <rect x="80" y="60" width="1040" height="44" rx="12" fill="#1e2030"/>
+  <rect x="80" y="92" width="1040" height="12" fill="#1e2030"/>
+  <!-- Window dots -->
+  <circle cx="112" cy="82" r="7" fill="#f7768e" opacity="0.8"/>
+  <circle cx="136" cy="82" r="7" fill="#e0af68" opacity="0.8"/>
+  <circle cx="160" cy="82" r="7" fill="#9ece6a" opacity="0.8"/>
+  <!-- Tab -->
+  <text x="600" y="88" font-family="'SF Mono', 'Fira Code', monospace" font-size="14" fill="#565f89" text-anchor="middle">bitwise.blog</text>
+
+  <!-- Line numbers gutter -->
+  <text font-family="'SF Mono', 'Fira Code', monospace" font-size="15" fill="#3b4261">
+    <tspan x="108" y="140">1</tspan>
+    <tspan x="108" y="164">2</tspan>
+    <tspan x="108" y="188">3</tspan>
+    <tspan x="108" y="212">4</tspan>
+    <tspan x="108" y="236">5</tspan>
+    <tspan x="108" y="260">6</tspan>
+    <tspan x="108" y="284">7</tspan>
+    <tspan x="108" y="308">8</tspan>
+    <tspan x="108" y="332">9</tspan>
+    <tspan x="100" y="356">10</tspan>
+    <tspan x="100" y="380">11</tspan>
+    <tspan x="100" y="404">12</tspan>
+    <tspan x="100" y="428">13</tspan>
+    <tspan x="100" y="452">14</tspan>
+    <tspan x="100" y="476">15</tspan>
+    <tspan x="100" y="500">16</tspan>
+    <tspan x="100" y="524">17</tspan>
+    <tspan x="100" y="548">18</tspan>
   </text>
 
-  <!-- BitWise text with gradient - matching header logo style -->
-  <text x="600" y="280" font-family="monospace, 'Courier New', Courier" font-size="120" font-weight="700" fill="url(#banner-gradient)" text-anchor="middle">
-    BitWise
+  <!-- Gutter separator -->
+  <line x1="126" y1="120" x2="126" y2="560" stroke="#292e42" stroke-width="1"/>
+
+  <!-- Code content - syntax highlighted -->
+  <!-- Line 1: import -->
+  <text y="140" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="142" fill="#bb9af7">import</tspan>
+    <tspan fill="#c0caf5"> { Blog } </tspan>
+    <tspan fill="#bb9af7">from</tspan>
+    <tspan fill="#9ece6a"> '@bitwise/core'</tspan>
   </text>
 
-  <!-- Three binary dots - matching header logo -->
-  <circle cx="540" cy="340" r="10" fill="url(#banner-gradient)" opacity="0.5"/>
-  <circle cx="575" cy="340" r="10" fill="url(#banner-gradient)" opacity="0.7"/>
-  <circle cx="610" cy="340" r="10" fill="url(#banner-gradient)" opacity="1"/>
-
-  <!-- Subtitle -->
-  <text x="600" y="410" font-family="monospace, 'Courier New', Courier" font-size="36" fill="rgba(255,255,255,0.7)" text-anchor="middle">
-    Backend Blog
+  <!-- Line 2: import -->
+  <text y="164" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="142" fill="#bb9af7">import</tspan>
+    <tspan fill="#c0caf5"> { publish } </tspan>
+    <tspan fill="#bb9af7">from</tspan>
+    <tspan fill="#9ece6a"> '@bitwise/engine'</tspan>
   </text>
+
+  <!-- Line 3: blank -->
+
+  <!-- Line 4: const -->
+  <text y="212" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="142" fill="#bb9af7">const</tspan>
+    <tspan fill="#7aa2f7"> config</tspan>
+    <tspan fill="#89ddff"> =</tspan>
+    <tspan fill="#c0caf5"> {</tspan>
+  </text>
+
+  <!-- Line 5: name -->
+  <text y="236" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="170" fill="#73daca">name</tspan>
+    <tspan fill="#89ddff">:</tspan>
+    <tspan fill="#9ece6a"> 'BitWise'</tspan>
+    <tspan fill="#c0caf5">,</tspan>
+  </text>
+
+  <!-- Line 6: focus -->
+  <text y="260" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="170" fill="#73daca">focus</tspan>
+    <tspan fill="#89ddff">:</tspan>
+    <tspan fill="#9ece6a"> 'backend'</tspan>
+    <tspan fill="#c0caf5">,</tspan>
+  </text>
+
+  <!-- Line 7: topics -->
+  <text y="284" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="170" fill="#73daca">topics</tspan>
+    <tspan fill="#89ddff">:</tspan>
+    <tspan fill="#c0caf5"> [</tspan>
+    <tspan fill="#9ece6a">'systems'</tspan>
+    <tspan fill="#c0caf5">, </tspan>
+    <tspan fill="#9ece6a">'distributed'</tspan>
+    <tspan fill="#c0caf5">, </tspan>
+    <tspan fill="#9ece6a">'infra'</tspan>
+    <tspan fill="#c0caf5">],</tspan>
+  </text>
+
+  <!-- Line 8: closing brace -->
+  <text y="308" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="142" fill="#c0caf5">}</tspan>
+  </text>
+
+  <!-- Line 9: blank -->
+
+  <!-- Line 10: export -->
+  <text y="356" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="142" fill="#bb9af7">export default</tspan>
+    <tspan fill="#7dcfff"> async function</tspan>
+    <tspan fill="#7aa2f7"> serve</tspan>
+    <tspan fill="#c0caf5">() {</tspan>
+  </text>
+
+  <!-- Line 11: const blog -->
+  <text y="380" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="170" fill="#bb9af7">const</tspan>
+    <tspan fill="#7aa2f7"> blog</tspan>
+    <tspan fill="#89ddff"> =</tspan>
+    <tspan fill="#bb9af7"> new</tspan>
+    <tspan fill="#7aa2f7"> Blog</tspan>
+    <tspan fill="#c0caf5">(config)</tspan>
+  </text>
+
+  <!-- Line 12: blank -->
+
+  <!-- Line 13: await -->
+  <text y="428" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="170" fill="#bb9af7">await</tspan>
+    <tspan fill="#7aa2f7"> publish</tspan>
+    <tspan fill="#c0caf5">(blog, {</tspan>
+  </text>
+
+  <!-- Line 14: deep dives -->
+  <text y="452" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="198" fill="#73daca">deepDives</tspan>
+    <tspan fill="#89ddff">:</tspan>
+    <tspan fill="#ff9e64"> true</tspan>
+    <tspan fill="#c0caf5">,</tspan>
+  </text>
+
+  <!-- Line 15: practical -->
+  <text y="476" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="198" fill="#73daca">practical</tspan>
+    <tspan fill="#89ddff">:</tspan>
+    <tspan fill="#ff9e64"> true</tspan>
+    <tspan fill="#c0caf5">,</tspan>
+  </text>
+
+  <!-- Line 16: closing -->
+  <text y="500" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="170" fill="#c0caf5">})</tspan>
+  </text>
+
+  <!-- Line 17: close function -->
+  <text y="524" font-family="'SF Mono', 'Fira Code', monospace" font-size="15">
+    <tspan x="142" fill="#c0caf5">}</tspan>
+  </text>
+
+  <!-- Line 18: blank -->
+
+  <!-- Blinking cursor on line 18 -->
+  <rect x="142" y="537" width="9" height="17" fill="#c0caf5" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0;0.7" dur="1.2s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Active line highlight on line 10 -->
+  <rect x="127" y="340" width="992" height="22" fill="#1e2030" opacity="0.6"/>
+
+  <!-- Status bar at bottom -->
+  <rect x="80" y="558" width="1040" height="12" rx="0" fill="#1e2030"/>
+  <rect x="80" y="558" width="1040" height="12" rx="0" fill="#1e2030"/>
+  <!-- Bottom rounded corners -->
+  <rect x="80" y="558" width="1040" height="12" fill="#1e2030"/>
+  <rect x="80" y="558" width="1040" height="2" fill="#292e42"/>
 </svg>
