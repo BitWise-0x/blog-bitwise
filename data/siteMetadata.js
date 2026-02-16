@@ -1,9 +1,9 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'BitWise | Backend Blog',
+  title: 'BitWise | Tales from the Backend',
   author: 'Rob@BitWise',
   headerTitle: '',
-  description: 'BitWise | Backend Blog',
+  description: 'BitWise | Tales from the Backend',
   language: 'en-US',
   theme: 'dark', // system, dark or light
   siteUrl: 'https://blog.bitwisesolutions.co',
