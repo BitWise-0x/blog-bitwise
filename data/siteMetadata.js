@@ -4,7 +4,7 @@ const siteMetadata = {
   author: 'Rob@BitWise',
   headerTitle: '',
   description: 'BitWise | Backend Blog',
-  language: 'en-us',
+  language: 'en-US',
   theme: 'dark', // system, dark or light
   siteUrl: 'https://blog.bitwisesolutions.co',
   siteRepo: 'https://github.com/BitWise-0x/blog-bitwise',

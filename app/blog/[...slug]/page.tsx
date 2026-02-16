@@ -62,9 +62,12 @@ export async function generateMetadata(props: {
       type: 'article',
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
-      url: './',
+      url: `${siteMetadata.siteUrl}/blog/${slug}`,
       images: ogImages,
       authors: authors.length > 0 ? authors : [siteMetadata.author],
+    },
+    alternates: {
+      canonical: post.canonicalUrl || `${siteMetadata.siteUrl}/blog/${slug}`,
     },
     twitter: {
       card: 'summary_large_image',
