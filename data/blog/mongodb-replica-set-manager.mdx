@@ -8,17 +8,17 @@ summary: 'How I built a production-ready MongoDB replica set controller for Dock
 authors: ['default']
 ---
 
-Running a stateful database with high availability guarantees inside an ephemeral container orchestrator presents a fundamental tension. Docker Swarm is designed around the assumption that containers are disposable — they can be recreated, rescheduled, and assigned new IP addresses at any time. MongoDB replica sets, by contrast, depend on stable network identities and coordinated configuration across members. Bridging these two paradigms in a way that is both automated and production-safe is a non-trivial problem.
+Running a stateful database with high availability guarantees inside an ephemeral container orchestrator presents a fundamental tension. Docker Swarm is designed around the assumption that containers are disposable: they can be recreated, rescheduled, and assigned new IP addresses at any time. MongoDB replica sets, by contrast, depend on stable network identities and coordinated configuration across members. Bridging these two paradigms in a way that is both automated and production-safe is a non-trivial problem.
 
 This post introduces the [MongoDB Replica Set Manager](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager), a sidecar controller I built to automate the full lifecycle of MongoDB replica sets running in Docker Swarm. It covers the architecture, the key operational capabilities, and the lessons learned from running it in production.
 
 ## The Problem
 
-Traditional MongoDB replica set configuration assumes a relatively static environment: fixed IP addresses or hostnames, manual initialization of the replica set, and predictable node discovery. Docker Swarm breaks all three of these assumptions. IP addresses are assigned dynamically and may change on container restart. Service discovery operates through DNS rather than static configuration. Containers are subject to recreation and rescheduling at the orchestrator's discretion. The result is that a manual approach to replica set management — one that works well on bare metal or virtual machines — becomes untenable in a Swarm environment.
+Traditional MongoDB replica set configuration assumes a relatively static environment: fixed IP addresses or hostnames, manual initialization of the replica set, and predictable node discovery. Docker Swarm breaks all three of these assumptions. IP addresses are assigned dynamically and may change on container restart. Service discovery operates through DNS rather than static configuration. Containers are subject to recreation and rescheduling at the orchestrator's discretion. The result is that a manual approach to replica set management, one that works well on bare metal or virtual machines, becomes untenable in a Swarm environment.
 
 ## MongoDB Replica Set Manager
 
-The [MongoDB Replica Set Manager](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager) was built to eliminate this operational burden entirely. Rather than requiring manual intervention for initialization, scaling, or failover, it provides a sidecar controller that automates replica set management by leveraging Docker's own APIs for service discovery and container orchestration. The controller monitors the cluster continuously, detects changes in membership, and reconfigures the replica set accordingly — whether the change is a fresh deployment, a node failure, or a deliberate scaling operation.
+The [MongoDB Replica Set Manager](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager) was built to eliminate this operational burden entirely. Rather than requiring manual intervention for initialization, scaling, or failover, it provides a sidecar controller that automates replica set management by leveraging Docker's own APIs for service discovery and container orchestration. The controller monitors the cluster continuously, detects changes in membership, and reconfigures the replica set accordingly, whether the change is a fresh deployment, a node failure, or a deliberate scaling operation.
 
 ## Architecture Overview
 
@@ -61,7 +61,7 @@ graph TB
 
 `} />
 
-The **database** service runs MongoDB in global mode — one instance per Swarm node — configured with keyfile authentication and a health check sidecar. The **dbcontroller** is a Python-based sidecar that runs as a single replica constrained to a manager node. It mounts the Docker socket, giving it the ability to discover running tasks, inspect their network addresses, and execute commands inside MongoDB containers. An optional **nosqlclient** service provides a web interface for manual inspection.
+The **database** service runs MongoDB in global mode (one instance per Swarm node), configured with keyfile authentication and a health check sidecar. The **dbcontroller** is a Python-based sidecar that runs as a single replica constrained to a manager node. It mounts the Docker socket, giving it the ability to discover running tasks, inspect their network addresses, and execute commands inside MongoDB containers. An optional **nosqlclient** service provides a web interface for manual inspection.
 
 ### Sidecar Controller
 
@@ -112,7 +112,7 @@ async function discoverMembers() {
 
 ### Replica Set Configuration Manager
 
-With an accurate member list in hand, the controller determines the appropriate action. If no existing replica set configuration is found, it initializes a new one. If a configuration exists but the member IPs have changed — as happens after a stack redeployment or node rescheduling — it reconfigures the replica set to reflect the current state. This detection runs continuously, ensuring that the replica set remains correctly configured through any infrastructure change.
+With an accurate member list in hand, the controller determines the appropriate action. If no existing replica set configuration is found, it initializes a new one. If a configuration exists but the member IPs have changed (as happens after a stack redeployment or node rescheduling), it reconfigures the replica set to reflect the current state. This detection runs continuously, ensuring that the replica set remains correctly configured through any infrastructure change.
 
 ```javascript
 async function ensureReplicaSet() {
@@ -133,7 +133,7 @@ async function ensureReplicaSet() {
 
 ### Automatic Initialization
 
-On a fresh deployment, the controller waits for all MongoDB instances to report as healthy, discovers the full set of cluster members via the Swarm task API, initializes the replica set with an optimal configuration, and establishes authentication and access controls — including the creation of an admin user and the initial application database. The entire process requires no manual intervention.
+On a fresh deployment, the controller waits for all MongoDB instances to report as healthy, discovers the full set of cluster members via the Swarm task API, initializes the replica set with an optimal configuration, and establishes authentication and access controls, including the creation of an admin user and the initial application database. The entire process requires no manual intervention.
 
 ```javascript
 async function initializeReplicaSet(members) {
@@ -325,6 +325,6 @@ Several improvements are in progress: automated backups with scheduled snapshots
 
 ## Conclusion
 
-The tension between stateful database requirements and ephemeral container orchestration is real, but it is not insurmountable. With the right automation layer in place, running MongoDB replica sets in Docker Swarm becomes not only feasible but operationally straightforward — initialization, scaling, failover, and recovery all happen without manual intervention.
+The tension between stateful database requirements and ephemeral container orchestration is real, but it is not insurmountable. With the right automation layer in place, running MongoDB replica sets in Docker Swarm becomes not only feasible but operationally straightforward. Initialization, scaling, failover, and recovery all happen without manual intervention.
 
 The MongoDB Replica Set Manager has been running in production for over a year across multiple clusters, and the operational overhead has been minimal. The sidecar pattern has proven well-suited to this problem: by placing the orchestration logic alongside the database containers rather than in an external system, the controller can leverage Docker's own APIs for discovery and configuration with minimal latency and maximum accuracy. Check out the [repository on GitHub](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager) for full documentation and deployment examples.
