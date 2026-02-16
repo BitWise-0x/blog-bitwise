@@ -22,7 +22,7 @@ mermaid.initialize({
     edgeLabelBackground: '#1a1b26',
     nodeTextColor: '#c0caf5',
   },
-  flowchart: { curve: 'basis', padding: 20 },
+  flowchart: { curve: 'basis', padding: 15, htmlLabels: false },
   fontFamily: 'ui-monospace, monospace',
 })
 
