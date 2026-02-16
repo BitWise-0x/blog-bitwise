@@ -110,7 +110,9 @@ In a centralized exchange, one can easily infer this information from the order 
 
 An example of a pricing formula is the constant product formula:
 
-$$d * c = k$$
+$$
+d * c = k
+$$
 
 Let $d$ and $c$ represent our two assets dog and cat token respectively. Assume we have 100 of each token - the constant $k$ is simply $100 * 100$ or $10{,}000$.
 
@@ -209,7 +211,9 @@ In Uniswap a pool consists of two assets, predominantly a very popular token lik
 
 It uses a generalised version of the constant product formula:
 
-$$\text{const} = \prod_{t} B_{t}^{W_{t}}$$
+$$
+\text{const} = \prod_{t} B_{t}^{W_{t}}
+$$
 
 <Image
   src="/static/images/blog/amm/nd-constant-product-formula.png"
@@ -220,7 +224,9 @@ $$\text{const} = \prod_{t} B_{t}^{W_{t}}$$
 
 where the constant is derived by the product of the balance of tokens $B$ weighted by $W$ for all $t$ tokens in the pool.
 
-$$\sum_{t} W_{t} = 1$$
+$$
+\sum_{t} W_{t} = 1
+$$
 
 giving a constant returns to scale function.
 
