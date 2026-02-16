@@ -1,7 +1,7 @@
 ---
 title: 'Executing ComfyUI Workflows as Standalone Scripts'
 date: '2025-09-10'
-lastmod: '2025-09-10'
+lastmod: '2026-02-16'
 tags: ['ai', 'comfyui', 'python', 'generative-ai', 'automation', 'machine-learning']
 draft: false
 summary: 'Run ComfyUI workflows programmatically without the web UI. A deep dive into building a standalone Python executor with WorkflowExecutor and ExecutionCache.'
@@ -19,19 +19,22 @@ canonicalUrl: 'https://blog.bitwisesolutions.co/blog/executing-comfyui-workflows
   height={450}
 />
 
-[ComfyUI](https://github.com/comfyanonymous/ComfyUI) is an open-source graphical user interface for creating and executing complex machine learning workflows. It skyrocketed in popularity alongside the growth of diffusion models by enabling users to design intricate pipelines and experiment with different settings such as text encoding, image generation parameters, and postprocessing. The intuitive drag-and-drop graph-based interface makes ComfyUI a power user tool popular among the developer community.
+I have been using [ComfyUI](https://github.com/comfyanonymous/ComfyUI) extensively for programmatic generative workflows. It is genuinely one of the best tools in the diffusion model ecosystem for prototyping pipelines — the drag-and-drop graph-based interface makes it easy to experiment with different text encodings, generation parameters, and postprocessing steps, and it has deservedly become the power user tool of choice in the developer community.
 
-However, the default setup of ComfyUI relies on a web-based interface and a server backend to execute workflows, with both parts of the code very much intertwined. This makes running ComfyUI workflows in a standalone manner particularly difficult and adds additional setup hassle and execution overhead as developers look to deploy their workflows in more lean applications or as part of a headless processing pipeline.
+But when it came time to deploy workflows as part of a headless processing pipeline, I hit a wall. ComfyUI's architecture couples the workflow execution engine tightly to its web server and frontend. There is no clean way to say "here is a workflow JSON, execute it and give me the output" without spinning up the full server stack. This adds unnecessary setup overhead and makes integration with batch processing or orchestration tools significantly harder.
 
-Recently, I was exploring various solutions to run ComfyUI workflows as standalone scripts, but I could not find any suitable workarounds. The closest alternative was [ComfyUI-to-Python-Extension](https://github.com/pydn/ComfyUI-to-Python-Extension), which converts ComfyUI workflows to Python scripts. However, this still requires an intermediate conversion step that would make **dynamic** workflows more difficult to execute.
+I explored various alternatives, including [ComfyUI-to-Python-Extension](https://github.com/pydn/ComfyUI-to-Python-Extension), which converts workflows to Python scripts. But this requires an intermediate conversion step that breaks down for **dynamic** workflows where parameters change between runs. What I needed was a way to execute the workflow API JSON directly, the same format ComfyUI's own server uses internally.
 
-After a couple of hours of tinkering, I pieced together a solution that allows you to run ComfyUI workflows as standalone scripts. Read on for more implementation details.
+After a couple of hours digging through ComfyUI's internals, I pieced together a standalone executor that bypasses the server entirely. This post walks through that solution: how ComfyUI represents workflows internally, what its execution engine does under the hood, and the minimal code needed to run workflows as standalone Python scripts.
 
 ## Prerequisites
 
 Refer to the [ComfyUI Github page](https://github.com/comfyanonymous/ComfyUI) for more information on how to install and run the ComfyUI server. The server makes it easy to create and prototype workflows, and I will also be using it to generate the Workflow API JSON file that we will use to run the workflow as a standalone script.
 
 As part of this post, I will also be referencing the [SDXL Turbo workflow](https://comfyanonymous.github.io/ComfyUI_examples/sdturbo/) which you can find over here. If you wish to follow along, you can download the model from the official [SDXL Turbo Repository](https://huggingface.co/stabilityai/sdxl-turbo/blob/main/sd_xl_turbo_1.0_fp16.safetensors) and place it in the `models/checkpoints` directory.
+
+> [!IMPORTANT]
+> This solution works by importing ComfyUI's internal modules directly (`nodes`, `comfy_execution`, `execution`). These are not pip-installable packages — you need to run the script from within the ComfyUI directory or add it to your Python path.
 
 ## Understanding the Workflow JSON Format
 
@@ -135,21 +138,46 @@ The workflow API JSON format serves as the foundation for executing workflows pr
 
 ## Creating a Standalone Execution Script
 
-To execute ComfyUI workflows in a standalone environment, we need to create a Python script that encapsulates the necessary components and logic. There are two main components of the script - `WorkflowExecutor` and `ExecutionCache`, which form the core of the standalone execution process.
+The key insight from reading ComfyUI's source is that its execution engine is actually quite modular — the coupling to the web server is more about convenience than necessity. The server essentially validates the workflow JSON, builds an execution graph, iterates through it node by node, and caches the results. None of that requires a web server.
 
-The complete standalone execution script is outlined below.
+The standalone executor consists of two main components — `WorkflowExecutor` and `ExecutionCache` — which together replicate what the server does when you click "Queue Prompt":
+
+<Mermaid chart={`
+graph TB
+    A["Workflow API JSON"] --> B["validate_prompt()"]
+    B --> C["DynamicPrompt"]
+    C --> D["ExecutionCache\ninitialize()"]
+    C --> E["ExecutionList"]
+
+    E --> F{"ExecutionList\nempty?"}
+    F -- No --> G["stage_node_execution()"]
+    G --> H["get_input_data()"]
+    H --> I["get_output_data()"]
+    I --> J["ExecutionCache\nset_output()"]
+    J --> K["complete_node_execution()"]
+    K --> F
+
+    F -- Yes --> L["Return Results"]
+
+    style A fill:#7b2cbf,stroke:#9d4edd,color:#fff
+    style B fill:#14213d,stroke:#565f89,color:#fff
+    style C fill:#14213d,stroke:#565f89,color:#fff
+    style D fill:#2d6a4f,stroke:#40916c,color:#fff
+    style E fill:#2d6a4f,stroke:#40916c,color:#fff
+    style F fill:#b5651d,stroke:#d4a574,color:#fff
+    style L fill:#2d6a4f,stroke:#40916c,color:#fff
+
+`} />
 
 ### WorkflowExecutor
 
-The `WorkflowExecutor` is responsible for orchestrating the execution of a ComfyUI workflow. It initializes the execution environment, manages caching, and handles node execution. In the `execute` method, it first validates the workflow JSON, using ComfyUI's `validate_prompt` function before constructing it as a `DynamicPrompt` that gets converted to an `ExecutionList`.
-
-We will then iterate over the `ExecutionList` and execute each node in the workflow using the `_execute_node` method. This relies on ComfyUI's `get_input_data` to retrieve input data for each node and passes it to the `get_output_data` function which executes the node and returns the output data.[^2]
+The `WorkflowExecutor` orchestrates the execution of a ComfyUI workflow. In the `execute` method, it first validates the workflow JSON using ComfyUI's `validate_prompt` function before constructing it as a `DynamicPrompt` that gets converted to an `ExecutionList`. It then iterates over the `ExecutionList` and executes each node using the `_execute_node` method, which relies on ComfyUI's `get_input_data` to retrieve input data for each node and passes it to `get_output_data` for execution.[^2]
 
 ### ExecutionCache
 
-The `ExecutionCache` class provides unified cache management for workflow execution. It handles caching of node outputs, UI data, and object instances, optimizing performance and reducing redundant computations. Under the hood, it is built on top of ComfyUI's `HierarchicalCache` and stores information about a node object, output data, and UI data.
+I initially tried running without caching, and model loading added 20+ seconds to every execution. ComfyUI's `HierarchicalCache` handles this well — once a checkpoint is loaded, subsequent runs reuse the cached model objects. The `ExecutionCache` wrapper provides a cleaner interface over ComfyUI's three separate cache layers: node outputs, UI data, and object instances.
 
-Combining the `WorkflowExecutor` and `ExecutionCache` classes provides a relatively minimal implementation of the logic required to execute workflows as standalone scripts while maintaining as close compatibility with ComfyUI as possible.
+Combining the `WorkflowExecutor` and `ExecutionCache` provides a relatively minimal reimplementation of ComfyUI's execution logic while maintaining as close compatibility as possible.
 
 ### Full Source Code
 
@@ -401,7 +429,37 @@ If all goes well, you should be able to get a generated image in the `output` di
   height={512}
 />
 
-I hope this guide makes working with ComfyUI workflows a little easier and more pleasant.
+## Lessons Learned
+
+A few gotchas I ran into while building this that are worth calling out.
+
+### The Two JSON Formats Will Trip You Up
+
+The distinction between `workflow.json` (frontend/Litegraph format) and the Workflow API JSON (backend/execution format) is not well documented anywhere in ComfyUI's codebase. I initially tried to execute the frontend format and spent time debugging cryptic validation errors before realising the execution engine expects a completely different structure.
+
+> [!WARNING]
+> The workflow JSON you get from dragging and dropping a `.png` with embedded metadata is the frontend format, not the API format. You must explicitly export via dev mode to get the executable API format.
+
+### Model Path Resolution
+
+ComfyUI resolves model paths relative to its own directory structure. When running standalone, you need to ensure your working directory is the ComfyUI root, or model loading will fail with path-not-found errors. This tripped me up initially since I was running the script from a different directory.
+
+> [!TIP]
+> Run `os.chdir('/path/to/ComfyUI')` at the top of your script, or set the working directory before calling `setup_comfyui_env()`.
+
+### Subgraph Execution
+
+The standalone executor deliberately raises an error if a node returns a subgraph. In practice, this means certain custom nodes that dynamically create sub-workflows will not work. For the standard ComfyUI node set this is not an issue, but it is worth knowing if you rely on advanced custom nodes.
+
+## What's Next
+
+The standalone executor covers the core use case — running a known workflow without the server overhead — but there are several directions I am considering:
+
+- **Dynamic workflow composition:** Building workflows programmatically in Python rather than designing them in the GUI, then executing them through the same pipeline. The Workflow API JSON format is simple enough that generating it from code is straightforward.
+- **Batch processing:** Iterating over a set of prompts or parameter variations and executing the workflow for each, which was the primary use case that motivated this work.
+- **Orchestration integration:** Wrapping the executor in a task queue or subprocess pool for parallel workflow execution across multiple GPUs.
+
+The ComfyUI codebase is not designed for this kind of usage, and I expect the internal APIs to shift as the project evolves. But for now, the executor handles the standard node set reliably, and the caching layer means repeated executions with the same checkpoint are fast after the initial model load.
 
 ---
 

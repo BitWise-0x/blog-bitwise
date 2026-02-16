@@ -1,7 +1,7 @@
 ---
 title: 'Automated Market Makers (AMM) Explained'
 date: '2025-11-14'
-lastmod: '2025-11-14'
+lastmod: '2026-02-16'
 tags: ['defi', 'blockchain', 'cryptocurrency', 'finance', 'web3', 'trading']
 draft: false
 summary: 'A comprehensive guide to automated market makers — how Uniswap, SushiSwap, Balancer and Curve power decentralized trading through liquidity pools, algorithmic pricing, and token incentives.'
@@ -19,7 +19,9 @@ canonicalUrl: 'https://blog.bitwisesolutions.co/blog/understanding-automated-mar
 
 ## Preface
 
-This article is a summary of what I have learnt from the decentralized finance space - written in a friendly and accessible way. In this post, I contextualised such protocols in the wider financial market and explore the evolution of DeFi, or more specifically automated market makers, in an incremental fashion. By peeling off the layers of complexity of the topic, I hope you gain a broader appreciation and understanding of the topic.
+My interest in AMMs started from the infrastructure side. While exploring automation strategies for cryptocurrency trading, I kept running into the same question: how does decentralized trading actually work without a central order book? The answer turned out to be both simpler and more elegant than I expected — a single pricing formula, a shared pool of tokens, and a fee structure is all it takes.
+
+This post is my attempt to contextualise these protocols in the wider financial market and explore the evolution of automated market makers in an incremental fashion. By peeling off the layers of complexity, I hope you gain a broader appreciation for how a few lines of smart contract code managed to replicate what institutions with billions in capital have been doing for decades.
 
 ## Table of Contents
 
@@ -66,6 +68,33 @@ For such two-sided market making to happen without any central party in control,
 3. Incentivise liquidity providers
 4. Incentivise users
 
+<Mermaid chart={`
+graph TB
+    subgraph challenges["Challenges for Decentralized Market Making"]
+        direction TB
+        A["Decentralized\nBuying & Selling"] --> B["Liquidity Pools"]
+        C["Automated\nPricing"] --> D["Constant Product\nFormula"]
+        E["LP\nIncentives"] --> F["Trading Fees\n+ Token Rewards"]
+        G["User\nIncentives"] --> H["No KYC\n+ Competitive Fees"]
+    end
+
+    B --> I["Two-Sided\nDecentralized Market"]
+    D --> I
+    F --> I
+    H --> I
+
+    I --> J["Functioning\nDecentralized Exchange"]
+
+    style challenges fill:#0d1b2a,stroke:#1b263b,color:#fff
+    style I fill:#7b2cbf,stroke:#9d4edd,color:#fff
+    style J fill:#2d6a4f,stroke:#40916c,color:#fff
+    style A fill:#14213d,stroke:#3a86ff,color:#fff
+    style C fill:#14213d,stroke:#3a86ff,color:#fff
+    style E fill:#14213d,stroke:#3a86ff,color:#fff
+    style G fill:#14213d,stroke:#3a86ff,color:#fff
+
+`} />
+
 ### A Brief History of Uniswap
 
 <Image
@@ -81,7 +110,8 @@ The initial idea of using an AMM mechanism for decentralized exchanges originate
 
 Hayden Adams launched [Uniswap](https://uniswap.org/) in November 2018 and it began to quickly attract liquidity and trading volume. Its governance token (UNI) was introduced on September 2020 and allows token holders to participate in the governance of the protocol such as usage of the treasury and upgrade decisions. At the point of time of writing, the protocol has facilitated 55M trades worth $295B.
 
-> **Note:** It's important to make a distinction between Uniswap the decentralized exchange and Uniswap the governance token (UNI). Unless specified explicitly, Uniswap in the course of the article refers to the exchange rather than the token.
+> [!NOTE]
+> It's important to make a distinction between Uniswap the decentralized exchange and Uniswap the governance token (UNI). Unless specified explicitly, Uniswap in the course of the article refers to the exchange rather than the token.
 
 Let's examine how Uniswap, the pioneer in the Automated Market Maker (AMM) solves the 4 challenges highlighted above.
 
@@ -155,11 +185,15 @@ This happens automatically via smart contracts which "mints" liquidity tokens an
 
 A pool created by a single user can hardly be characterised as decentralized. In fact, a common scam known as rug pulls rely on tricking users to low liquidity pools which can be easily manipulated by the single liquidity provider. Thus, it is crucial that AMMs have a strong incentive mechanism to attract more liquidity providers to the pool.
 
+> [!WARNING]
+> Always verify pool depth and the number of distinct liquidity providers before trading on an AMM. Single-LP pools are a common vector for rug pulls — the provider can drain the pool at any time, leaving traders with worthless tokens.
+
 ### AMM LP Incentives
 
 Unlike a centralized market maker system like Citadel in which revenue is dependent on the ability to flip good trades, in a decentralized system there is no flipping. Instead, a portion of every trade is distributed as fees to the liquidity providers. In Uniswap, 0.3% of all trade volume would be distributed proportionally to the liquidity providers.
 
-> **Technical side note**: Rather than distributing tokens for every trade that takes place to every liquidity provider, which would just add to "shoe leather cost", the fees are added back to the pool and the same number of liquidity tokens held by a liquidity provider can now be redeemed for a higher value.
+> [!TIP]
+> Rather than distributing tokens for every trade that takes place to every liquidity provider, which would just add to "shoe leather cost", the fees are added back to the pool and the same number of liquidity tokens held by a liquidity provider can now be redeemed for a higher value.
 
 If every pool were to provide the same fees, liquidity providers who are hoping to maximise profit would choose pools that have the highest trade activity.[^3] For new pools consisting of less well-known tokens, additional incentives can be offered to liquidity providers such as bonus token distributions.
 
@@ -192,6 +226,8 @@ While there has been an explosive growth of AMM protocols in the DeFi space, man
 <Image src="/static/images/blog/amm/sushiswap.jpg" alt="SushiSwap" width={800} height={450} />
 
 [SushiSwap](https://sushi.com/) was launched by its anonymous "chef" Nomi in August 2020 as a fork of Uniswap with some minor modifications. On launch, it managed to attract nearly a billion dollars in staked liquidity from Uniswap sparking much discussion and debate within the Ethereum community on the ethics of copying. It is also famous for the [exit scam fiasco](https://news.bitcoin.com/sushiswap-returns-14-million-exit-scam/) in which chef Nomi liquidated his holders of the token before apologizing and transferring control of the protocol to FTX exchange CEO Sam Bankman-Fried.[^4]
+
+The SushiSwap saga is a case study in how quickly trust evaporates in a trustless ecosystem. It also, somewhat ironically, demonstrated the resilience of the protocol itself — the code continued functioning perfectly while the humans around it imploded.
 
 While seemingly a Uniswap copycat, SushiSwap introduced the idea of yield farming in the decentralized exchange space. Yield farming is the idea of staking cryptocurrency assets into platforms in return for payouts over time, popularised by the likes of Compound, an algorithmic, autonomous interest rate protocol.
 
@@ -251,6 +287,9 @@ For the stableswap invariant curve, price changes very slowly at the "ideal" pri
 
 The capital efficiency benefit for liquidity providers as a result of Curve's invariant formula also leads to lower price slippage for users trading stable assets (stablecoins and wrapped coins). Since its launch in 2020, Curve has emerged as the leading decentralized exchange market for stable assets.
 
+> [!NOTE]
+> Since this article was originally written, the AMM space has continued to evolve significantly. Uniswap v3 introduced concentrated liquidity, allowing LPs to allocate capital within specific price ranges for improved capital efficiency. Uniswap v4 introduces "hooks" that allow developers to customise pool behaviour with arbitrary logic. These innovations deserve a dedicated follow-up.
+
 ## Conclusion
 
 <ZoomableImage
@@ -260,9 +299,11 @@ The capital efficiency benefit for liquidity providers as a result of Curve's in
   height={450}
 />
 
-Since the introduction of AMM technology, adoption and usage of decentralized exchanges have grown significantly. Uniswap is now in the top 10 cryptocurrency exchanges by daily traded volume, behind Binance, Upbit, Okex, Huobi, Coinbase and Bitfinex.
+Since the introduction of AMM technology, adoption and usage of decentralized exchanges have grown significantly. Uniswap is now in the top 10 cryptocurrency exchanges by daily traded volume.
 
-I hope this article gives you a good introduction and broader appreciation of the AMM space. To what extent will algorithmic protocols successfully replace or complement traditional exchanges? Can decentralized governance of AMM protocol truly happen? Will AMM technology branch out from crypto to other asset classes? It's still early days in the space but an interesting one to keep track of.
+What strikes me most about AMMs is how much they accomplish with so little mechanism. A single formula, a pool of tokens, and a fee structure — and suddenly you have a functioning exchange that trades hundreds of billions of dollars without any single entity in control. The design space that Curve's StableSwap formula opened up is particularly compelling: the idea that you can tune a mathematical curve to match the economic properties of the assets being traded has implications well beyond stablecoins.
+
+Whether algorithmic protocols will complement or eventually challenge traditional exchanges remains an open question. What is clear is that the core primitive — automated, permissionless market making — has proven itself at scale, and the design space is still expanding.
 
 ## Related Resources
 

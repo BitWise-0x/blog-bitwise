@@ -1,7 +1,7 @@
 ---
 title: 'Generating Structured Output from LLMs'
 date: '2025-12-30'
-lastmod: '2025-12-30'
+lastmod: '2026-02-16'
 tags: ['ai', 'llm', 'generative-ai', 'python', 'data-science', 'prompt-engineering']
 draft: false
 summary: 'A survey of three approaches to generating structured output from LLMs: model fine-tuning, domain-specific language modelling, and schema engineering.'
@@ -10,11 +10,12 @@ authors: ['default']
 canonicalUrl: 'https://blog.bitwisesolutions.co/blog/generating-structured-output-from-llms'
 ---
 
-Although a significant focus on language models has centered on their text-generation capabilities, there is an emerging recognition that the capacity to produce structured output holds equal or potentially greater significance.
+If you have spent any time building applications on top of LLMs, you have probably hit the same wall I did: the model gives you beautiful prose when what you actually need is a JSON object that will not crash your downstream parser. I spent weeks wrestling with retry logic and ad-hoc validation before deciding to properly survey the approaches that existed for coercing structured output from language models.
 
-The ability to consistently generate well-typed output is a key requirement for building operational systems and a stride towards constructing more resilient and robust AI systems.
+The ability to consistently generate well-typed output is a key requirement for building operational systems — arguably as important as the text generation capability itself. This article is that survey: an honest assessment of three approaches to generating structured output from LLMs, their trade-offs, and where each one falls short.
 
-This article surveys three distinct approaches used to generate structured output from LLMs: model fine-tuning, domain-specific language modeling, and schema engineering.
+> [!NOTE]
+> This article was originally written in late 2025. Since then, OpenAI has released native structured output support via `response_format`, and Instructor has become the dominant approach in the Python ecosystem. The conceptual framework and approach comparison remain relevant, but some of the specific library APIs shown may have evolved.
 
 ## What is Structured Output
 
@@ -26,6 +27,9 @@ This article surveys three distinct approaches used to generate structured outpu
 />
 
 Structured output refers to data or information generated in accordance with a predefined schema or format. Frequently employed formats encompass JSON, XML, or language-specific constructs like Python dictionaries. These structured outputs may also encompass additional typing information such as [JSON Schema](https://json-schema.org/understanding-json-schema), Pydantic models, or Typescript objects.
+
+> [!TIP]
+> When evaluating structured output solutions, keep in mind the two distinct sub-problems: getting valid JSON (schema structure) and getting the right fields with sensible values (schema content). Most solutions handle the first far better than the second.
 
 ## Why is Structured Output Important
 
@@ -111,6 +115,42 @@ As far as I am aware, there are three main approaches that help to solve the abo
 1. Model Fine-tuning
 2. Domain Specific Language Modelling
 3. Schema Engineering
+
+<Mermaid chart={`
+graph LR
+    subgraph problem["Structured Output"]
+        direction TB
+        S1["Correct Schema\nStructure"]
+        S2["Consistent Schema\nContent"]
+    end
+
+    subgraph approaches["Three Approaches"]
+        direction TB
+        A["Model\nFine-tuning"]
+        B["Domain Specific\nLanguage"]
+        C["Schema\nEngineering"]
+    end
+
+    subgraph tools["Libraries & Tools"]
+        direction TB
+        A1["OpenAI Function Calling\nAnthropic Tool Use"]
+        B1["LMQL / Guidance\nOutlines / GBNF"]
+        C1["Instructor / Marvin\nTypeChat / Zod-GPT"]
+    end
+
+    problem --> approaches
+    A --> A1
+    B --> B1
+    C --> C1
+
+    style problem fill:#0d1b2a,stroke:#3a86ff,color:#fff
+    style approaches fill:#14213d,stroke:#565f89,color:#fff
+    style tools fill:#1a1b26,stroke:#7aa2f7,color:#fff
+    style A fill:#2d6a4f,stroke:#40916c,color:#fff
+    style B fill:#7b2cbf,stroke:#9d4edd,color:#fff
+    style C fill:#b5651d,stroke:#d4a574,color:#fff
+
+`} />
 
 Let's delve deeper into each approach, exploring their respective advantages and disadvantages. If you would like to run the examples yourself, follow along with the [Colab Notebook](https://colab.research.google.com/drive/11rRaVzRZHbYTfW4tVdbMCULtsVEckQdo?usp=sharing) - you would need to enter an OpenAI API key to run the examples.
 
@@ -333,6 +373,9 @@ JSON:
 All the magic happens in these few lines of code. Essentially, it re-writes the dataclass into a sample schema and prompts the LLM to generate the JSON payload which is parsed back to a dataclass.
 
 The similarity to Python feels like a double-edged sword. While it is relatively easy to pick up for straight forward tasks, it can be more tricky to use for more complex tasks and it might be easier to coerce an LLM to generate the desired output directly, rather than work with another parser, compiler, and runtime.
+
+> [!WARNING]
+> LMQL's Python-like syntax can be deceptive. While simple examples work well, complex nested structures or custom validation logic can be harder to debug than writing the prompt engineering directly. Consider whether the abstraction layer is earning its complexity for your use case.
 
 In terms of validation, it offers more flexibility beyond what can be done with fine-tuning but is limited by the simple data structures and types that it supports, though that might change in the future.
 
@@ -622,24 +665,17 @@ Recipe(
 
 Similar to the Marvin example, additional validation could also be added and Instructor automatically retries if a validation fails.[^8]
 
-## Summary
+### Marvin vs Instructor
 
-In this article, I explored three different approaches to generating structured output from LLMs: model fine-tuning, domain specific language modelling, and schema engineering.
-
-Creating structured output involves two key aspects:
-
-1. Correct schema structure
-2. Consistent schema content
-
-LLM providers like OpenAI and Anthropic have fine-tuned their models to generate correct JSON schema structures. By contrast, open-source models (currently Llama) can utilize domain specific instructions, such as GBNF, to constrain the output, ensuring valid JSON. It remains to be seen whether other open-source models will adopt a similar approach out of the box, perhaps encapsulating the logic into a `JSON` mode parameter i.e. OpenAI's recent release for easy adoption.
-
-Achieving consistent content requires a hybrid approach. While further fine-tuning LLMs can assist in outputting specific structures, there's no assurance that the output will consistently match the expected format. Additional validation on the user side, utilizing a DSL approach like LMQL or employing a type interface to parse and validate the output, significantly contributes to ensuring consistent and predictable outputs.
-
-The choice between using a DSL or prompt engineering hinges on one's preference regarding where to handle the control flow logic of the code. Approaches like LMQL or Guidance embed the control flow logic directly into the prompt, potentially offering end-users more granular control over the output (see [LMQL Playground](https://lmql.ai/playground/)).[^9] Conversely, schema engineering libraries such as Marvin and Instructor take a data model/type-first approach while allowing the program creator to utilize the full power and flexibility of a programming language for further validation or manipulation of the output.
+Having worked with both libraries, my preference is for Instructor's explicit approach over Marvin's magic. When debugging a failing prompt, I want to see exactly what was sent to the API, and Instructor makes that trivially easy. Marvin's `@ai_model` decorator is elegant, but the hidden system message and function calling setup can make it harder to diagnose when things go wrong. Instructor's approach of patching `ChatCompletion` directly means there is a single, visible point of interaction with the API — what you see is what you send.
 
 ## Conclusion
 
-I hope this article has provided a useful overview of the different approaches to generating structured output from LLMs. May it guide you in your journey to build less spaghetti code and more robust AI applications! One final note - the only thing missing is an evaluation of the recipes themselves. I'll leave that to you to decide.
+If I were starting a project today that required structured output from an LLM, I would reach for Instructor first. Its Pydantic-native approach gives you the validation, IDE support, and retry logic that the other approaches require you to build yourself. LMQL remains intellectually interesting but has not achieved the ecosystem adoption needed to justify learning a new DSL.[^9] The model fine-tuning approach is now largely a solved problem at the provider level — both OpenAI and Anthropic offer native structured output modes that handle the schema structure problem well.
+
+What remains unsolved is the schema content problem. No amount of typing will prevent a model from hallucinating a garlic weight of "2 grams" when you meant "2 cloves." That gap between structural correctness and semantic correctness is where the real engineering challenge lies, and where I suspect the next wave of tooling will focus. For now, the combination of provider-side JSON mode and client-side Pydantic validation gets you most of the way there — just don't trust the numbers without checking them.
+
+May this survey guide you in your journey to build less spaghetti code and more robust AI applications.
 
 ---
 
