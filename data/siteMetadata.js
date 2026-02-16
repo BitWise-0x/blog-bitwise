@@ -10,7 +10,7 @@ const siteMetadata = {
   siteUrl: 'https://blog.bitwisesolutions.co',
   siteRepo: 'https://github.com/BitWise-0x/blog-bitwise',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/social-banner.svg`,
-  socialBanner: `${process.env.BASE_PATH || ''}/static/images/social-banner.svg`,
+  socialBanner: `${process.env.BASE_PATH || ''}/static/images/social-banner.png`,
   email: 'rob@bitwisesolutions.co',
   github: 'https://github.com/BitWise-0x',
   locale: 'en-US',
