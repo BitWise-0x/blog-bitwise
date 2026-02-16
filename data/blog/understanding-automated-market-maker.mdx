@@ -32,6 +32,7 @@ This post is my attempt to contextualise these protocols in the wider financial 
 - [Incentives for liquidity providers](#incentives-for-liquidity-providers)
 - [Incentives for users](#incentives-for-users)
 - [Innovation in the AMM space](#innovation-in-the-amm-space)
+- [The next frontier: MEV-aware AMMs](#the-next-frontier-mev-aware-amms)
 - [Conclusion](#conclusion)
 
 ## Order Books, Market Makers and Exchanges
@@ -108,7 +109,7 @@ The initial idea of using an AMM mechanism for decentralized exchanges originate
 
 > "My proposed solution is to use the style of 'on-chain automated market maker' used in prediction markets in a decentralized exchange context."
 
-Hayden Adams launched [Uniswap](https://uniswap.org/) in November 2018 and it began to quickly attract liquidity and trading volume. Its governance token (UNI) was introduced on September 2020 and allows token holders to participate in the governance of the protocol such as usage of the treasury and upgrade decisions. At the point of time of writing, the protocol has facilitated 55M trades worth $295B.
+Hayden Adams launched [Uniswap](https://uniswap.org/) in November 2018 and it began to quickly attract liquidity and trading volume. Its governance token (UNI) was introduced on September 2020 and allows token holders to participate in the governance of the protocol such as usage of the treasury and upgrade decisions. The protocol has since surpassed $1 trillion in cumulative trading volume, launched its own layer-2 chain ([Unichain](https://unichain.org/)), and in December 2025, governance activated the protocol fee switch for the first time via the [UNIfication proposal](https://blog.uniswap.org/unification), using protocol revenue to buy and burn UNI tokens.
 
 > [!NOTE]
 > It's important to make a distinction between Uniswap the decentralized exchange and Uniswap the governance token (UNI). Unless specified explicitly, Uniswap in the course of the article refers to the exchange rather than the token.
@@ -217,7 +218,7 @@ Decentralized exchanges require no registration, KYC or verification procedures.
 
 The above points summarise Uniswap in a nutshell. While there are other concepts like flash swaps, price oracles and governance, they are ancillary to the operations of an AMM system.
 
-If you have made it this far, congratulations - you now have a good understanding of the most popular decentralized finance (DeFi) protocol by market capitalisation, one that has powered 55M trades and nearly $295B by market volume. The rest of the article covers other protocols that have innovated on Uniswap.
+If you have made it this far, congratulations - you now have a good understanding of the most popular decentralized finance (DeFi) protocol by market capitalisation, one that has surpassed $1 trillion in cumulative trading volume. The rest of the article covers other protocols that have innovated on Uniswap.
 
 While there has been an explosive growth of AMM protocols in the DeFi space, many of them are just clones of a few popular ones with minor tweaks to the front-end user interface and deployed on alternative chains. Unfortunately, the DeFi space does not really value originality that highly and there are many clone projects abound.[^5] I choose to focus on 3 protocols that bring something new to the table - SushiSwap, Balancer and Curve.
 
@@ -266,6 +267,9 @@ $$
 
 giving a constant returns to scale function.
 
+> [!NOTE]
+> Balancer V3, launched in late 2024, introduced [Boosted Pools](https://www.theblock.co/post/330379/balancer-v3-launches-aave) in partnership with Aave, merging swap fees and lending yield into a single LP position. It also added a hooks framework (similar in spirit to Uniswap v4's hooks) and MEV-recapturing mechanisms like the Priority Fee Hook, which redirects extracted value back to liquidity providers. The protocol has since deployed across multiple chains including Base and HyperEVM.
+
 ### Curve, Slippage and Stableswap
 
 <Image src="/static/images/blog/amm/curve.png" alt="Curve Finance" width={800} height={450} />
@@ -287,8 +291,19 @@ For the stableswap invariant curve, price changes very slowly at the "ideal" pri
 
 The capital efficiency benefit for liquidity providers as a result of Curve's invariant formula also leads to lower price slippage for users trading stable assets (stablecoins and wrapped coins). Since its launch in 2020, Curve has emerged as the leading decentralized exchange market for stable assets.
 
+> [!WARNING]
+> In July 2023, Curve suffered a [$73M exploit](https://hacken.io/discover/curve-finance-liquidity-pools-hack-explained/) caused by a reentrancy vulnerability in specific versions of the Vyper compiler, not in Curve's own logic, but in the language it was built on. White-hat hackers recovered 73% of stolen funds, and victims were fully compensated by December 2023. The incident underscores the layered smart contract risk in DeFi: even audited protocols are exposed to vulnerabilities in their underlying toolchain. Curve has since recovered, launched crvUSD (its native stablecoin), and expanded to new networks.
+
 > [!NOTE]
-> Since this article was originally written, the AMM space has continued to evolve significantly. Uniswap v3 introduced concentrated liquidity, allowing LPs to allocate capital within specific price ranges for improved capital efficiency. Uniswap v4 introduces "hooks" that allow developers to customise pool behaviour with arbitrary logic. These innovations deserve a dedicated follow-up.
+> Since this article was originally written, the AMM space has continued to evolve significantly. Uniswap v3 introduced concentrated liquidity, allowing LPs to allocate capital within specific price ranges for improved capital efficiency. [Uniswap v4](https://blog.uniswap.org/uniswap-v4-is-here), launched in January 2025, introduced "hooks", external smart contracts that developers can attach to pools to customise behaviour such as dynamic fees, automated strategies, and risk controls. Over 150 hooks have already been developed, and pool creation gas costs dropped by 99%. In February 2025, Uniswap Labs launched [Unichain](https://www.coindesk.com/tech/2025/02/10/uniswap-labs-officially-launches-layer-2-unichain), its own layer-2 chain built on Optimism's OP Stack, now processing ~$100B in annualized DEX volume.
+
+### The Next Frontier: MEV-Aware AMMs
+
+One problem conspicuously absent from the original four challenges is value extraction. In practice, arbitrageurs and MEV (Maximal Extractable Value) bots systematically extract value from both traders and liquidity providers. Sandwich attacks, where a bot places orders before and after a user's trade to profit from the price movement, have become endemic on public mempools. For LPs, the cost has been formalised as loss-versus-rebalancing (LVR): the difference between what an LP earns from fees and what they lose to informed traders who arbitrage stale pool prices against external markets.
+
+A new generation of AMM designs has emerged to address this. [CoW AMM](https://cow.fi/) uses intent-based trading, where users submit signed "intents to trade" off-chain rather than on-chain transactions. These intents are batched and settled together, eliminating the sequential ordering that MEV bots exploit. By running batch auctions, CoW AMM captures rebalancing profits for LPs instead of leaking them to arbitrageurs.
+
+The Function-Maximizing AMM (FM-AMM) takes a similar approach: all orders within a batch are executed simultaneously at a single uniform clearing price, removing the ability to front-run or sandwich individual trades. These designs represent a fundamental shift from the reactive, single-transaction model that Uniswap pioneered toward a batch-oriented, MEV-aware paradigm.
 
 ## Conclusion
 
@@ -313,6 +328,9 @@ Whether algorithmic protocols will complement or eventually challenge traditiona
 - [Calculating the value of a liquidity provider token](https://dailydefi.org/articles/lp-token-value-calculation/)
 - [Understanding Uniswap returns](https://pintail.medium.com/understanding-uniswap-returns-cc593f3499ef)
 - [Impermanent loss explained](https://chainbulletin.com/impermanent-loss-explained-with-examples-math/)
+- [Uniswap v4 documentation](https://docs.uniswap.org/contracts/v4/overview)
+- [Balancer V3 launch announcement](https://www.theblock.co/post/330379/balancer-v3-launches-aave)
+- [CoW Protocol - MEV protection and intent-based trading](https://cow.fi/)
 
 ---
 
