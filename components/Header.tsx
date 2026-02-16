@@ -18,7 +18,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="mr-3 w-36 sm:w-56 md:w-72">
             <Logo />
-            <span className="mt-4 block text-left text-lg font-medium text-gray-500 dark:text-gray-400">
+            <span className="mt-3 block text-left text-lg font-medium text-gray-500 dark:text-gray-400">
               Tales from the Backend
             </span>
           </div>
