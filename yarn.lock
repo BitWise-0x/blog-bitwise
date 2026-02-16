@@ -5120,6 +5120,7 @@ __metadata:
     body-scroll-lock: 3.1.5
     contentlayer2: 0.5.8
     cross-env: ^10.1.0
+    dompurify: ^3.3.1
     esbuild: 0.27.3
     eslint: ^9.18.0
     eslint-config-next: 15.5.12
@@ -6439,7 +6440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.2.5":
+"dompurify@npm:^3.2.5, dompurify@npm:^3.3.1":
   version: 3.3.1
   resolution: "dompurify@npm:3.3.1"
   dependencies:
