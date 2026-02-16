@@ -22,9 +22,9 @@ Docker Swarm breaks all these assumptions with:
 - Service discovery via DNS
 - Container recreation and rescheduling
 
-## Enter MongoDB Replica Set Manager
+## MongoDB Replica Set Manager
 
-After too many late nights debugging MongoDB failovers in Swarm, I built the [MongoDB Replica Set Manager](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager)—a specialized controller that automates everything needed for production-ready MongoDB clusters in containerized environments.
+I built the [MongoDB Replica Set Manager](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager) to automate replica set management for MongoDB clusters running in Docker Swarm.
 
 ## Architecture Overview
 
@@ -69,13 +69,13 @@ async function discoverMembers() {
   const tasks = await docker.listTasks({
     filters: {
       service: [serviceName],
-      'desired-state': ['running']
-    }
+      'desired-state': ['running'],
+    },
   })
 
   return tasks
-    .filter(task => task.Status.State === 'running')
-    .map(task => {
+    .filter((task) => task.Status.State === 'running')
+    .map((task) => {
       const ip = task.NetworksAttachments[0].Addresses[0].split('/')[0]
       return `${ip}:27017`
     })
@@ -119,12 +119,12 @@ async function initializeReplicaSet(members) {
     members: members.map((host, idx) => ({
       _id: idx,
       host: host,
-      priority: idx === 0 ? 2 : 1  // Prefer first member as primary
-    }))
+      priority: idx === 0 ? 2 : 1, // Prefer first member as primary
+    })),
   }
 
   await mongo.admin().command({
-    replSetInitiate: config
+    replSetInitiate: config,
   })
 
   console.log('✓ Replica set initialized successfully')
@@ -161,7 +161,7 @@ async function monitorHealth() {
   setInterval(async () => {
     const status = await mongo.admin().command({ replSetGetStatus: 1 })
 
-    status.members.forEach(member => {
+    status.members.forEach((member) => {
       if (member.health === 0 && member.stateStr !== 'REMOVED') {
         console.warn(`⚠ Member ${member.name} is unhealthy`)
         // Controller will automatically handle removal/re-add
@@ -183,7 +183,7 @@ networks:
     driver: overlay
     attachable: true
     driver_opts:
-      encrypted: "true"
+      encrypted: 'true'
 ```
 
 ### Storage Strategy
@@ -229,10 +229,10 @@ app.get('/metrics', async (req, res) => {
 mongodb_rs_members_total ${status.members.length}
 
 # HELP mongodb_rs_healthy_members Healthy replica set members
-mongodb_rs_healthy_members ${status.members.filter(m => m.health === 1).length}
+mongodb_rs_healthy_members ${status.members.filter((m) => m.health === 1).length}
 
 # HELP mongodb_rs_primary Current primary node
-mongodb_rs_primary ${status.members.find(m => m.stateStr === 'PRIMARY') ? 1 : 0}
+mongodb_rs_primary ${status.members.find((m) => m.stateStr === 'PRIMARY') ? 1 : 0}
   `)
 })
 ```
@@ -295,6 +295,7 @@ mongodb://mongo1,mongo2,mongo3/?replicaSet=rs0&readPreference=primaryPreferred
 ```
 
 This allows the driver to:
+
 - Automatically discover all members
 - Route writes to the primary
 - Distribute reads across secondaries
@@ -334,12 +335,6 @@ I'm working on several improvements:
 
 ## Conclusion
 
-Running MongoDB in Docker Swarm doesn't have to be painful. With the right automation, you can achieve production-grade reliability with minimal operational overhead.
+With the right automation, running MongoDB in Docker Swarm is straightforward.
 
-The MongoDB Replica Set Manager has been running in production for over a year, managing multiple clusters handling millions of operations daily. It's open source and ready for your production workloads.
-
-Check out the [repository on GitHub](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager) for complete documentation, examples, and contribution guidelines.
-
----
-
-*Questions about MongoDB clustering or Docker Swarm deployment strategies? Feel free to reach out or open an issue on GitHub.*
+The MongoDB Replica Set Manager has been running in production for over a year across multiple clusters. Check out the [repository on GitHub](https://github.com/BitWise-0x/MongoDB-ReplicaSet-Manager) for documentation and examples.

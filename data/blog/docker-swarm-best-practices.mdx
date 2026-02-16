@@ -4,20 +4,20 @@ date: '2025-05-05'
 lastmod: '2025-05-05'
 tags: ['docker', 'swarm', 'devops', 'tutorial', 'orchestration']
 draft: false
-summary: 'Lessons learned from managing production Docker Swarm clusters. Configuration patterns, common pitfalls, and optimization techniques that actually work in the real world.'
+summary: 'Configuration patterns, common pitfalls, and optimization techniques from running production Docker Swarm clusters.'
 authors: ['default']
 ---
 
-## Why Docker Swarm in 2025?
+## Docker Swarm in 2025
 
-Before diving into the practices, let's address the elephant in the room: Yes, Kubernetes dominates the orchestration space. But Docker Swarm has a place, especially for:
+Kubernetes dominates the orchestration space. But Docker Swarm has a place, especially for:
 
 - **Small to medium deployments** (5-50 nodes)
 - **Self-hosted infrastructure** with limited ops resources
 - **Simpler operational model** compared to K8s complexity
 - **Excellent integration** with Docker ecosystem
 
-After managing both Swarm and Kubernetes clusters in production, I've found Swarm hits a sweet spot for many use cases. Here's what I've learned.
+After running both in production, Swarm hits a sweet spot for many use cases.
 
 ## Stack File Organization
 
@@ -130,14 +130,14 @@ services:
     deploy:
       replicas: 6
       update_config:
-        parallelism: 2          # Update 2 at a time
-        delay: 10s              # Wait 10s between batches
+        parallelism: 2 # Update 2 at a time
+        delay: 10s # Wait 10s between batches
         failure_action: rollback
-        monitor: 30s            # Monitor for 30s before continuing
-        max_failure_ratio: 0.3  # Rollback if 30% fail
-        order: start-first      # Start new before stopping old
+        monitor: 30s # Monitor for 30s before continuing
+        max_failure_ratio: 0.3 # Rollback if 30% fail
+        order: start-first # Start new before stopping old
       rollback_config:
-        parallelism: 3          # Faster rollback
+        parallelism: 3 # Faster rollback
         delay: 5s
         failure_action: pause
 ```
@@ -152,7 +152,7 @@ Swarm needs to know if your service is actually healthy:
 services:
   api:
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -160,6 +160,7 @@ services:
 ```
 
 This enables:
+
 - Automatic container replacement on failures
 - Proper load balancing (only healthy containers receive traffic)
 - Accurate service status in `docker service ls`
@@ -179,13 +180,13 @@ networks:
     driver: overlay
     attachable: false
     driver_opts:
-      encrypted: "true"
+      encrypted: 'true'
   database:
     driver: overlay
     attachable: false
     driver_opts:
-      encrypted: "true"
-    internal: true  # No external access
+      encrypted: 'true'
+    internal: true # No external access
 ```
 
 Then connect services appropriately:
@@ -294,7 +295,7 @@ volumes:
     driver_opts:
       type: nfs
       o: addr=nfs-server.local,rw
-      device: ":/mnt/postgres"
+      device: ':/mnt/postgres'
 ```
 
 Or use volume plugins:
@@ -346,9 +347,9 @@ services:
   api:
     deploy:
       labels:
-        prometheus.enable: "true"
-        prometheus.port: "9090"
-        prometheus.path: "/metrics"
+        prometheus.enable: 'true'
+        prometheus.port: '9090'
+        prometheus.path: '/metrics'
 ```
 
 ### Centralized Logging
@@ -359,11 +360,11 @@ Use Loki or ELK for log aggregation:
 services:
   app:
     logging:
-      driver: "json-file"
+      driver: 'json-file'
       options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service,stack"
+        max-size: '10m'
+        max-file: '3'
+        labels: 'service,stack'
 ```
 
 Deploy log collectors:
@@ -373,7 +374,7 @@ services:
   promtail:
     image: grafana/promtail:latest
     deploy:
-      mode: global  # One per node
+      mode: global # One per node
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
 ```
@@ -510,7 +511,7 @@ ps:
 
 ## Conclusion
 
-Docker Swarm can be incredibly powerful when used correctly. The key is:
+Docker Swarm works well when you follow a few principles:
 
 1. **Structure your stacks** logically
 2. **Set resource limits** always
@@ -520,8 +521,4 @@ Docker Swarm can be incredibly powerful when used correctly. The key is:
 6. **Monitor everything**
 7. **Test failures** before they happen in production
 
-My [Orchestration-Stacks repository](https://github.com/BitWise-0x/Orchestration-Stacks) has complete working examples of these patterns in action. Feel free to use them as a starting point for your own infrastructure.
-
----
-
-*Have questions about Docker Swarm or want to share your own best practices? Reach out on GitHub or open a discussion!*
+My [Orchestration-Stacks repository](https://github.com/BitWise-0x/Orchestration-Stacks) has working examples of these patterns.
