@@ -19,7 +19,7 @@ const Header = () => {
           <div className="mr-3 w-36 sm:w-56 md:w-72">
             <Logo />
             <span className="mt-1 block text-left text-lg font-medium text-gray-500 dark:text-gray-400">
-              tales from the backend
+              Backend Blog
             </span>
           </div>
           {typeof siteMetadata.headerTitle === 'string' ? (

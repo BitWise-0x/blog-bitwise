@@ -1,4 +1,4 @@
-# BitWise | tales from the backend
+# BitWise | Backend Blog
 
 Public blog at [blog.bitwisesolutions.co](https://blog.bitwisesolutions.co) covering backend engineering, AI/ML, blockchain, and developer tooling.
 
