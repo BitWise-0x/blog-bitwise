@@ -12,7 +12,7 @@ canonicalUrl: 'https://blog.bitwisesolutions.co/blog/generating-structured-outpu
 
 If you have spent any time building applications on top of LLMs, you have probably hit the same wall I did: the model gives you beautiful prose when what you actually need is a JSON object that will not crash your downstream parser. I spent weeks wrestling with retry logic and ad-hoc validation before deciding to properly survey the approaches that existed for coercing structured output from language models.
 
-The ability to consistently generate well-typed output is a key requirement for building operational systems — arguably as important as the text generation capability itself. This article is that survey: an honest assessment of three approaches to generating structured output from LLMs, their trade-offs, and where each one falls short.
+The ability to consistently generate well-typed output is a key requirement for building operational systems, arguably as important as the text generation capability itself. This article is that survey: an honest assessment of three approaches to generating structured output from LLMs, their trade-offs, and where each one falls short.
 
 > [!NOTE]
 > This article was originally written in late 2025. Since then, OpenAI has released native structured output support via `response_format`, and Instructor has become the dominant approach in the Python ecosystem. The conceptual framework and approach comparison remain relevant, but some of the specific library APIs shown may have evolved.
@@ -667,13 +667,13 @@ Similar to the Marvin example, additional validation could also be added and Ins
 
 ### Marvin vs Instructor
 
-Having worked with both libraries, my preference is for Instructor's explicit approach over Marvin's magic. When debugging a failing prompt, I want to see exactly what was sent to the API, and Instructor makes that trivially easy. Marvin's `@ai_model` decorator is elegant, but the hidden system message and function calling setup can make it harder to diagnose when things go wrong. Instructor's approach of patching `ChatCompletion` directly means there is a single, visible point of interaction with the API — what you see is what you send.
+Having worked with both libraries, my preference is for Instructor's explicit approach over Marvin's magic. When debugging a failing prompt, I want to see exactly what was sent to the API, and Instructor makes that trivially easy. Marvin's `@ai_model` decorator is elegant, but the hidden system message and function calling setup can make it harder to diagnose when things go wrong. Instructor's approach of patching `ChatCompletion` directly means there is a single, visible point of interaction with the API. What you see is what you send.
 
 ## Conclusion
 
-If I were starting a project today that required structured output from an LLM, I would reach for Instructor first. Its Pydantic-native approach gives you the validation, IDE support, and retry logic that the other approaches require you to build yourself. LMQL remains intellectually interesting but has not achieved the ecosystem adoption needed to justify learning a new DSL.[^9] The model fine-tuning approach is now largely a solved problem at the provider level — both OpenAI and Anthropic offer native structured output modes that handle the schema structure problem well.
+If I were starting a project today that required structured output from an LLM, I would reach for Instructor first. Its Pydantic-native approach gives you the validation, IDE support, and retry logic that the other approaches require you to build yourself. LMQL remains intellectually interesting but has not achieved the ecosystem adoption needed to justify learning a new DSL.[^9] The model fine-tuning approach is now largely a solved problem at the provider level. Both OpenAI and Anthropic offer native structured output modes that handle the schema structure problem well.
 
-What remains unsolved is the schema content problem. No amount of typing will prevent a model from hallucinating a garlic weight of "2 grams" when you meant "2 cloves." That gap between structural correctness and semantic correctness is where the real engineering challenge lies, and where I suspect the next wave of tooling will focus. For now, the combination of provider-side JSON mode and client-side Pydantic validation gets you most of the way there — just don't trust the numbers without checking them.
+What remains unsolved is the schema content problem. No amount of typing will prevent a model from hallucinating a garlic weight of "2 grams" when you meant "2 cloves." That gap between structural correctness and semantic correctness is where the real engineering challenge lies, and where I suspect the next wave of tooling will focus. For now, the combination of provider-side JSON mode and client-side Pydantic validation gets you most of the way there. Just don't trust the numbers without checking them.
 
 May this survey guide you in your journey to build less spaghetti code and more robust AI applications.
 

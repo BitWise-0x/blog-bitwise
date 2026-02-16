@@ -4,7 +4,7 @@ date: '2025-11-14'
 lastmod: '2026-02-16'
 tags: ['defi', 'blockchain', 'cryptocurrency', 'finance', 'web3', 'trading']
 draft: false
-summary: 'A comprehensive guide to automated market makers — how Uniswap, SushiSwap, Balancer and Curve power decentralized trading through liquidity pools, algorithmic pricing, and token incentives.'
+summary: 'A comprehensive guide to automated market makers. How Uniswap, SushiSwap, Balancer and Curve power decentralized trading through liquidity pools, algorithmic pricing, and token incentives.'
 images: ['/static/images/blog/amm/amm-explained.png']
 authors: ['default']
 canonicalUrl: 'https://blog.bitwisesolutions.co/blog/understanding-automated-market-maker'
@@ -19,7 +19,7 @@ canonicalUrl: 'https://blog.bitwisesolutions.co/blog/understanding-automated-mar
 
 ## Preface
 
-My interest in AMMs started from the infrastructure side. While exploring automation strategies for cryptocurrency trading, I kept running into the same question: how does decentralized trading actually work without a central order book? The answer turned out to be both simpler and more elegant than I expected — a single pricing formula, a shared pool of tokens, and a fee structure is all it takes.
+My interest in AMMs started from the infrastructure side. While exploring automation strategies for cryptocurrency trading, I kept running into the same question: how does decentralized trading actually work without a central order book? The answer turned out to be both simpler and more elegant than I expected: a single pricing formula, a shared pool of tokens, and a fee structure is all it takes.
 
 This post is my attempt to contextualise these protocols in the wider financial market and explore the evolution of automated market makers in an incremental fashion. By peeling off the layers of complexity, I hope you gain a broader appreciation for how a few lines of smart contract code managed to replicate what institutions with billions in capital have been doing for decades.
 
@@ -186,7 +186,7 @@ This happens automatically via smart contracts which "mints" liquidity tokens an
 A pool created by a single user can hardly be characterised as decentralized. In fact, a common scam known as rug pulls rely on tricking users to low liquidity pools which can be easily manipulated by the single liquidity provider. Thus, it is crucial that AMMs have a strong incentive mechanism to attract more liquidity providers to the pool.
 
 > [!WARNING]
-> Always verify pool depth and the number of distinct liquidity providers before trading on an AMM. Single-LP pools are a common vector for rug pulls — the provider can drain the pool at any time, leaving traders with worthless tokens.
+> Always verify pool depth and the number of distinct liquidity providers before trading on an AMM. Single-LP pools are a common vector for rug pulls. The provider can drain the pool at any time, leaving traders with worthless tokens.
 
 ### AMM LP Incentives
 
@@ -227,7 +227,7 @@ While there has been an explosive growth of AMM protocols in the DeFi space, man
 
 [SushiSwap](https://sushi.com/) was launched by its anonymous "chef" Nomi in August 2020 as a fork of Uniswap with some minor modifications. On launch, it managed to attract nearly a billion dollars in staked liquidity from Uniswap sparking much discussion and debate within the Ethereum community on the ethics of copying. It is also famous for the [exit scam fiasco](https://news.bitcoin.com/sushiswap-returns-14-million-exit-scam/) in which chef Nomi liquidated his holders of the token before apologizing and transferring control of the protocol to FTX exchange CEO Sam Bankman-Fried.[^4]
 
-The SushiSwap saga is a case study in how quickly trust evaporates in a trustless ecosystem. It also, somewhat ironically, demonstrated the resilience of the protocol itself — the code continued functioning perfectly while the humans around it imploded.
+The SushiSwap saga is a case study in how quickly trust evaporates in a trustless ecosystem. It also, somewhat ironically, demonstrated the resilience of the protocol itself. The code continued functioning perfectly while the humans around it imploded.
 
 While seemingly a Uniswap copycat, SushiSwap introduced the idea of yield farming in the decentralized exchange space. Yield farming is the idea of staking cryptocurrency assets into platforms in return for payouts over time, popularised by the likes of Compound, an algorithmic, autonomous interest rate protocol.
 
@@ -301,9 +301,9 @@ The capital efficiency benefit for liquidity providers as a result of Curve's in
 
 Since the introduction of AMM technology, adoption and usage of decentralized exchanges have grown significantly. Uniswap is now in the top 10 cryptocurrency exchanges by daily traded volume.
 
-What strikes me most about AMMs is how much they accomplish with so little mechanism. A single formula, a pool of tokens, and a fee structure — and suddenly you have a functioning exchange that trades hundreds of billions of dollars without any single entity in control. The design space that Curve's StableSwap formula opened up is particularly compelling: the idea that you can tune a mathematical curve to match the economic properties of the assets being traded has implications well beyond stablecoins.
+What strikes me most about AMMs is how much they accomplish with so little mechanism. A single formula, a pool of tokens, and a fee structure, and suddenly you have a functioning exchange that trades hundreds of billions of dollars without any single entity in control. The design space that Curve's StableSwap formula opened up is particularly compelling: the idea that you can tune a mathematical curve to match the economic properties of the assets being traded has implications well beyond stablecoins.
 
-Whether algorithmic protocols will complement or eventually challenge traditional exchanges remains an open question. What is clear is that the core primitive — automated, permissionless market making — has proven itself at scale, and the design space is still expanding.
+Whether algorithmic protocols will complement or eventually challenge traditional exchanges remains an open question. What is clear is that the core primitive, automated permissionless market making, has proven itself at scale, and the design space is still expanding.
 
 ## Related Resources
 
