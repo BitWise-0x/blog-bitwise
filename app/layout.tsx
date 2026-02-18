@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
   title: {
     default: siteMetadata.title,
-    template: `%s | ${siteMetadata.title}`,
+    template: `%s | BitWise`,
   },
   description: siteMetadata.description,
   openGraph: {
@@ -69,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <link
         rel="apple-touch-icon"
-        sizes="76x76"
+        sizes="180x180"
         href={`${basePath}/static/favicons/apple-touch-icon.png?v=2`}
       />
       <link
