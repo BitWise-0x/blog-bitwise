@@ -11,7 +11,7 @@ const ContentSecurityPolicy = `
   style-src 'self' 'unsafe-inline';
   img-src 'self' avatars.githubusercontent.com picsum.photos blob: data:;
   media-src *.s3.amazonaws.com;
-  connect-src 'self' cloud.umami.is giscus.app;
+  connect-src 'self' cloud.umami.is *.umami.dev giscus.app;
   font-src 'self';
   frame-src giscus.app
 `
