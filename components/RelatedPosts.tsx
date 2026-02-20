@@ -26,16 +26,11 @@ export default function RelatedPosts({ currentSlug, currentTags, posts }: Relate
 
   return (
     <div className="py-6">
-      <h2 className="pb-3 text-xs tracking-wide text-gray-500 uppercase dark:text-gray-400">
-        Related Articles
-      </h2>
+      <h2 className="text-muted pb-3 text-xs tracking-wide uppercase">Related Articles</h2>
       <ul className="space-y-2">
         {related.map((post) => (
           <li key={post.slug}>
-            <Link
-              href={`/blog/${post.slug}`}
-              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-            >
+            <Link href={`/blog/${post.slug}`} className="text-link">
               {post.title}
             </Link>
           </li>

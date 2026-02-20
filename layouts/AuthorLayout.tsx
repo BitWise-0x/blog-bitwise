@@ -13,7 +13,7 @@ export default function AuthorLayout({ children, content }: Props) {
 
   return (
     <>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="divide-theme divide-y">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
           <h1 className="page-title">About</h1>
         </div>
@@ -29,8 +29,8 @@ export default function AuthorLayout({ children, content }: Props) {
               />
             )}
             <h3 className="pt-4 pb-2 text-2xl leading-8 font-bold tracking-tight">{name}</h3>
-            <div className="text-gray-500 dark:text-gray-400">{company}</div>
-            <div className="max-w-xs text-center text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+            <div className="text-muted">{company}</div>
+            <div className="text-muted max-w-xs text-center text-sm leading-relaxed">
               {occupation}
             </div>
             <div className="flex space-x-3 pt-6 pb-4">

@@ -7,7 +7,7 @@ import ThemeSwitch from './ThemeSwitch'
 import SearchButton from './SearchButton'
 
 const Header = () => {
-  let headerClass = 'flex items-end w-full bg-white dark:bg-gray-950 justify-between py-10'
+  let headerClass = 'flex items-end w-full bg-page justify-between py-10'
   if (siteMetadata.stickyNav) {
     headerClass += ' sticky top-0 z-50'
   }
@@ -18,7 +18,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="mr-3 w-36 sm:w-56 md:w-72">
             <Logo />
-            <span className="mt-1 block text-left text-lg font-medium text-gray-500 dark:text-gray-400">
+            <span className="text-muted mt-1 block text-left text-lg font-medium">
               Intelligent Backends
             </span>
           </div>
@@ -39,7 +39,7 @@ const Header = () => {
               <div key={link.title} className="flex items-center">
                 <Link
                   href={link.href}
-                  className="hover:text-primary-500 dark:hover:text-primary-400 m-1 font-medium text-gray-900 dark:text-gray-100"
+                  className="hover:text-primary-500 dark:hover:text-primary-400 text-heading m-1 font-medium"
                 >
                   {link.title}
                 </Link>

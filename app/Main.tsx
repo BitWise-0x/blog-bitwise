@@ -10,11 +10,11 @@ const MAX_DISPLAY = 5
 export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
   return (
     <>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="divide-theme divide-y">
         <div className="space-y-2 pt-6 pb-8 md:space-y-5">
           <h1 className="page-title">Latest</h1>
         </div>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+        <ul className="divide-theme divide-y">
           {!posts.length && 'No posts found.'}
           {posts.slice(0, MAX_DISPLAY).map((post) => {
             const { slug, date, title, summary, tags } = post
@@ -24,7 +24,7 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
                   <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
                     <dl>
                       <dt className="sr-only">Published on</dt>
-                      <dd className="text-base leading-6 font-medium text-gray-500 dark:text-gray-400">
+                      <dd className="text-muted text-base leading-6 font-medium">
                         <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
                       </dd>
                     </dl>
@@ -32,10 +32,7 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
                       <div className="space-y-6">
                         <div>
                           <h2 className="text-2xl leading-8 font-bold tracking-tight">
-                            <Link
-                              href={`/blog/${slug}`}
-                              className="text-gray-900 dark:text-gray-100"
-                            >
+                            <Link href={`/blog/${slug}`} className="text-heading">
                               {title}
                             </Link>
                           </h2>
@@ -45,14 +42,12 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
                             ))}
                           </div>
                         </div>
-                        <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                          {summary}
-                        </div>
+                        <div className="prose prose-summary max-w-none">{summary}</div>
                       </div>
                       <div className="text-base leading-6 font-medium">
                         <Link
                           href={`/blog/${slug}`}
-                          className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                          className="text-link"
                           aria-label={`Read more: "${title}"`}
                         >
                           Read more &rarr;
@@ -68,11 +63,7 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
       </div>
       {posts.length > MAX_DISPLAY && (
         <div className="flex justify-end text-base leading-6 font-medium">
-          <Link
-            href="/blog"
-            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-            aria-label="All posts"
-          >
+          <Link href="/blog" className="text-link" aria-label="All posts">
             All Posts &rarr;
           </Link>
         </div>

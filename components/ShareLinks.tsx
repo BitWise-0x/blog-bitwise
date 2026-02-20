@@ -26,18 +26,12 @@ export default function ShareLinks({ path }: ShareLinksProps) {
   }
 
   return (
-    <div className="flex gap-1 pt-6 pb-6 text-sm text-gray-700 dark:text-gray-300">
-      <button
-        onClick={handleShare}
-        className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-      >
+    <div className="prose-summary flex gap-1 pt-6 pb-6 text-sm">
+      <button onClick={handleShare} className="text-link">
         Share
       </button>
       {` • `}
-      <button
-        onClick={handleCopyLink}
-        className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-      >
+      <button onClick={handleCopyLink} className="text-link">
         {copied ? 'Copied!' : 'Copy link'}
       </button>
     </div>
