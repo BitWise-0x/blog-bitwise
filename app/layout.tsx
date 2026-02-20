@@ -55,6 +55,7 @@ export const metadata: Metadata = {
     title: siteMetadata.title,
     card: 'summary_large_image',
     images: [siteMetadata.socialBanner],
+    creator: '@BitWise_0x',
   },
 }
 

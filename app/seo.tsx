@@ -25,6 +25,7 @@ export function genPageMetadata({ title, description, image, ...rest }: PageSEOP
       title: `${title} | ${siteMetadata.title}`,
       card: 'summary_large_image',
       images: image ? [image] : [siteMetadata.socialBanner],
+      creator: '@BitWise_0x',
     },
     ...rest,
   }

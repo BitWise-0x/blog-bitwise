@@ -13,6 +13,8 @@ const siteMetadata = {
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/social-banner.png`,
   email: 'rob@bitwisesolutions.co',
   github: 'https://github.com/BitWise-0x',
+  x: 'https://x.com/BitWise_0x',
+  twitter: 'https://x.com/BitWise_0x',
   locale: 'en-US',
   // set to true if you want a navbar fixed to the top
   stickyNav: true,
