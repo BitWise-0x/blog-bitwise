@@ -5,9 +5,10 @@ import siteMetadata from '@/data/siteMetadata'
 
 interface ShareLinksProps {
   path: string
+  title?: string
 }
 
-export default function ShareLinks({ path }: ShareLinksProps) {
+export default function ShareLinks({ path, title }: ShareLinksProps) {
   const [copied, setCopied] = useState(false)
   const url = `${siteMetadata.siteUrl}/${path}`
 
@@ -25,8 +26,18 @@ export default function ShareLinks({ path }: ShareLinksProps) {
     }
   }
 
+  const handleShareToX = () => {
+    const text = title ? `${title}` : ''
+    const xUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
+    window.open(xUrl, '_blank', 'noopener,noreferrer')
+  }
+
   return (
     <div className="prose-summary flex gap-1 pt-6 pb-6 text-sm">
+      <button onClick={handleShareToX} className="text-link">
+        Share to X
+      </button>
+      {` • `}
       <button onClick={handleShare} className="text-link">
         Share
       </button>

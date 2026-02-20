@@ -98,7 +98,7 @@ export default function PostLayout({
             </dl>
             <div className="divide-theme divide-y xl:col-span-3 xl:row-span-2 xl:pb-0">
               <div className="prose dark:prose-invert max-w-none pt-10 pb-8">{children}</div>
-              <ShareLinks path={path} />
+              <ShareLinks path={path} title={title} />
               {relatedPosts && (
                 <RelatedPosts currentSlug={slug} currentTags={tags} posts={relatedPosts} />
               )}
