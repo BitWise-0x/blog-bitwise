@@ -22,9 +22,9 @@ export default function Footer() {
         <div className="text-muted mb-8 flex space-x-2 text-sm">
           <div>{siteMetadata.author}</div>
           <div>{` • `}</div>
-          <div>{`© ${new Date().getFullYear()}`}</div>
-          <div>{` • `}</div>
           <Link href="/">Intelligent Backends</Link>
+          <div>{` • `}</div>
+          <div>{`© ${new Date().getFullYear()}`}</div>
         </div>
       </div>
     </footer>
