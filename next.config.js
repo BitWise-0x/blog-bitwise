@@ -9,7 +9,7 @@ const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' giscus.app cloud.umami.is;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' avatars.githubusercontent.com picsum.photos blob: data:;
+  img-src 'self' avatars.githubusercontent.com blob: data:;
   media-src *.s3.amazonaws.com;
   connect-src 'self' cloud.umami.is *.umami.dev giscus.app;
   font-src 'self';
@@ -72,12 +72,7 @@ module.exports = () => {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
     images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'picsum.photos',
-        },
-      ],
+      remotePatterns: [],
       unoptimized,
     },
     async headers() {

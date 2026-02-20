@@ -28,10 +28,7 @@ export default async function Page() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
-      />
+      <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       <Main posts={posts} />
     </>
   )
