@@ -19,12 +19,8 @@ export default function Footer() {
           <SocialIcon kind="threads" href={siteMetadata.threads} size={6} />
           <SocialIcon kind="medium" href={siteMetadata.medium} size={6} />
         </div>
-        <div className="text-muted mb-8 flex space-x-2 text-sm">
-          <div>{siteMetadata.author}</div>
-          <div>{` • `}</div>
-          <Link href="/">Intelligent Backends</Link>
-          <div>{` • `}</div>
-          <div>{`© ${new Date().getFullYear()}`}</div>
+        <div className="text-muted mb-8 text-sm">
+          {`BitWise Solutions · © ${new Date().getFullYear()}`}
         </div>
       </div>
     </footer>
