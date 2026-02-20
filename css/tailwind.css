@@ -30,6 +30,7 @@
   --color-gray-100: oklch(0.967 0.003 264.542);
   --color-gray-200: oklch(0.928 0.006 264.531);
   --color-gray-300: oklch(0.872 0.01 258.338);
+  --color-gray-350: oklch(0.74 0.018 260);
   --color-gray-400: oklch(0.707 0.022 261.325);
   --color-gray-500: oklch(0.551 0.027 264.364);
   --color-gray-600: oklch(0.446 0.03 256.802);
@@ -140,7 +141,7 @@
   color: var(--color-gray-700);
 }
 :is(.dark, .dark *) .prose-summary {
-  color: var(--color-gray-300);
+  color: var(--color-gray-350);
 }
 
 .text-link {
