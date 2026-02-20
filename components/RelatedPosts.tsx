@@ -1,7 +1,4 @@
 import Link from '@/components/Link'
-import Tag from '@/components/Tag'
-import siteMetadata from '@/data/siteMetadata'
-import { formatDate } from 'pliny/utils/formatDate'
 import { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
 
@@ -28,35 +25,19 @@ export default function RelatedPosts({ currentSlug, currentTags, posts }: Relate
   if (related.length === 0) return null
 
   return (
-    <div className="divide-y divide-gray-200 dark:divide-gray-700">
-      <h2 className="pt-6 pb-4 text-xs tracking-wide text-gray-500 uppercase dark:text-gray-400">
+    <div className="py-6">
+      <h2 className="pb-3 text-xs tracking-wide text-gray-500 uppercase dark:text-gray-400">
         Related Articles
       </h2>
-      <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+      <ul className="space-y-2">
         {related.map((post) => (
-          <li key={post.slug} className="py-4">
-            <article>
-              <div className="space-y-1">
-                <h3 className="text-lg leading-7 font-bold tracking-tight">
-                  <Link href={`/blog/${post.slug}`} className="text-gray-900 dark:text-gray-100">
-                    {post.title}
-                  </Link>
-                </h3>
-                <div className="flex flex-wrap items-center gap-x-3">
-                  <time dateTime={post.date} className="text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(post.date, siteMetadata.locale)}
-                  </time>
-                  {post.tags.map((tag) => (
-                    <Tag key={tag} text={tag} />
-                  ))}
-                </div>
-                {post.summary && (
-                  <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
-                    {post.summary}
-                  </p>
-                )}
-              </div>
-            </article>
+          <li key={post.slug}>
+            <Link
+              href={`/blog/${post.slug}`}
+              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              {post.title}
+            </Link>
           </li>
         ))}
       </ul>
