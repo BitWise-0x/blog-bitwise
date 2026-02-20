@@ -15,6 +15,7 @@ const siteMetadata = {
   github: 'https://github.com/BitWise-0x',
   x: 'https://x.com/BitWise_0x',
   twitter: 'https://x.com/BitWise_0x',
+  bluesky: 'https://bsky.app/profile/bitwise-0x.bsky.social',
   locale: 'en-US',
   // set to true if you want a navbar fixed to the top
   stickyNav: true,
