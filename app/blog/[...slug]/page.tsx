@@ -104,12 +104,11 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
     .filter((a): a is NonNullable<typeof a> => a !== null)
   const mainContent = coreContent(post)
   const jsonLd = post.structuredData
-  jsonLd['author'] = authorDetails.map((author) => {
-    return {
-      '@type': 'Person',
-      name: author.name,
-    }
-  })
+  jsonLd['author'] = authorDetails.map((author) => ({
+    '@type': 'Person',
+    name: author.name,
+    sameAs: [author.github, author.twitter, author.bluesky].filter(Boolean),
+  }))
 
   const Layout = layouts[post.layout || defaultLayout]
 

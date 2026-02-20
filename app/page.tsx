@@ -15,6 +15,8 @@ export default async function Page() {
     publisher: {
       '@type': 'Person',
       name: siteMetadata.author,
+      url: siteMetadata.siteUrl,
+      sameAs: [siteMetadata.github, siteMetadata.x, siteMetadata.bluesky].filter(Boolean),
     },
     potentialAction: {
       '@type': 'SearchAction',
